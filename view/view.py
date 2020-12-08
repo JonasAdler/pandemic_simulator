@@ -23,9 +23,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         i = 1
         #self.stackedWidget.setCurrentWidget(self.simulatorWidget)
 
-    def updateData(self, data):
-        self.dataLabel.setText("Simulation step:" + str(data))
-
     def updateScene(self, scene):
-        self.graphicsView.setScene(scene)
+        self.graphicsView_2.setScene(scene)
+        #self.graphicsView.fitInView(0, 0, 1000, 1000)
 

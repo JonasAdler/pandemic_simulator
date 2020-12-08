@@ -9,6 +9,7 @@ class Presenter(QtCore.QObject):
     def __init__(self):
         super(Presenter, self).__init__()
         # create main window
+
         self.ui = View()
         self.simulation = None
         self.isSimulationRunning = False
@@ -24,7 +25,7 @@ class Presenter(QtCore.QObject):
     def mainLoop(self):
         if self.isSimulationRunning:
             self.simulation.performStep()
-            self.ui.updateData(self.simulation.getData())
+            #self.ui.updateData(self.simulation.getData())
             self.ui.updateScene(self.simulation.getScene())
 
     def startSimulation(self):
