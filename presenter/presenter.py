@@ -25,8 +25,10 @@ class Presenter(QtCore.QObject):
     def mainLoop(self):
         if self.isSimulationRunning:
             self.simulation.performStep()
+            self.ui.drawItems(self.simulation.getParticleList())
+            self.ui.updateScene()
             #self.ui.updateData(self.simulation.getData())
-            self.ui.updateScene(self.simulation.getScene())
+
 
     def startSimulation(self):
         self.isSimulationRunning = True
