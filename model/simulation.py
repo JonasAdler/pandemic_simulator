@@ -1,6 +1,6 @@
 import random
 import model.myParticle
-from resources.healthconditions import healthconditions
+from model.healthconditions import healthconditions
 
 class Simulation:
     def __init__(self):
@@ -31,13 +31,13 @@ class Simulation:
         for i in range(0, 50):
             self.particleList[i] = model.myParticle.MyParticle(random.randint(0, 492), random.randint(0, 492), 8, 8) # Erstellen eines Partikel-Objekts
         for i in range(45, 50):
-            self.particleList[i].status = healthconditions.INFECTED
+            self.particleList[i].status = "INFECTED"
 
     # moves the particle in a random direction, but will not let it go out of bounds
     def moveParticle(self):
         for i in range(0, 50):
-            dx = random.randint(-1, 1) # random directions are selected for the particle to move to, negative is left, positive is right
-            dy = random.randint(-1, 1) # random directions are selected for the particle to move to, negative is upwards, positive is downwards
+            dx = random.randint(-2, 2) # random directions are selected for the particle to move to, negative is left, positive is right
+            dy = random.randint(-2, 2) # random directions are selected for the particle to move to, negative is upwards, positive is downwards
             if 0 < self.particleList[i].x + dx < 492 and 0 < self.particleList[i].y + dy < 492:
                 self.particleList[i].x = self.particleList[i].x + dx
                 self.particleList[i].y = self.particleList[i].y + dy
@@ -54,7 +54,7 @@ class Simulation:
                 if i != j:
                     if abs(self.particleList[i].x - self.particleList[j].x) < 10 and \
                             abs(self.particleList[i].y - self.particleList[j].y) < 10 and \
-                            (self.particleList[i].status == healthconditions.INFECTED or self.particleList[j].status == healthconditions.INFECTED):  # an assembly of necessary conditions
+                            (self.particleList[i].status == "INFECTED" or self.particleList[j].status == "INFECTED"):  # an assembly of necessary conditions
                         # Accuracy has to be adjustable by the user ("< 10" -> infection radius)
-                        if riskOfInf < 5: # variable name # -> just a reminder, not the actual risk as it is the random number # (0,5% would be the risk here)
-                            self.particleList[i].status = healthconditions.INFECTED
+                        if riskOfInf < 90: # variable name # -> just a reminder, not the actual risk as it is the random number # (0,5% would be the risk here)
+                            self.particleList[i].status = "INFECTED"

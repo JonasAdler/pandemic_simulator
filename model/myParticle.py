@@ -1,4 +1,4 @@
-from resources.healthconditions import healthconditions
+from model.healthconditions import healthconditions
 
 class MyParticle:
     def __init__(self, x, y, width, height):
@@ -6,4 +6,5 @@ class MyParticle:
         self.y = y
         self.width = width
         self.height = height
-        self.status = healthconditions.HEALTHY
+        # self.status = healthconditions.HEALTHY  -> Enum eventuell überflüssig
+        self.status = "HEALTHY"
