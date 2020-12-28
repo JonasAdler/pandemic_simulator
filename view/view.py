@@ -8,6 +8,7 @@ from view.mainwindow import Ui_MainWindow
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     startSimulationSignal = QtCore.pyqtSignal()
+    pauseSimulationSignal = QtCore.pyqtSignal()
 
     def __init__(self):
         super(View, self).__init__()
@@ -18,11 +19,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scene = QtWidgets.QGraphicsScene(0, 0, 500, 500)
         self.redBrush = QBrush(Qt.red)
         self.greenBrush = QBrush(Qt.green)
+        self.greyBrush = QBrush(Qt.gray)
+        self.yellowBrush = QBrush(Qt.yellow)
         self.pen = QPen(Qt.black)
         self.scene.addRect(0, 0, 500, 500)
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
+        self.resetSimButton.pressed.connect(self.pauseSimulationSignal)
 
     def startSimulationClicked(self):
         self.startSimulationSignal.emit()
