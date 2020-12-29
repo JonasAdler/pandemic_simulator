@@ -29,16 +29,30 @@ class Presenter(QtCore.QObject):
             self.ui.updateScene()
             #self.ui.updateData(self.simulation.getData())
 
-    def pauseSimulation(self):
-        self.isSimulationRunning = False
 
     def startSimulation(self):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
         self.simulation = Simulation()
         self.ui.startSimulation()
+        # ToDo: change the button to a reset-Button (resetSimButton) -> maybe in view
+
+    def pauseSimulation(self):
+        self.isSimulationRunning = False
+        print("Simulation is paused at {} days.".format(self.simulation.stepCounter/120))
+
+    def resumeSiumlation(self):
+        self.isSimulationRunning = True
+        print("Resuming the simulation!")
+
+    def resetSimulation(self):
+        self.isSimulationRunning = False
+        self.ui.scene.clear()
+        self.simulation = None
 
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
+        self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
+        self.ui.resetSimulationSignal.connect(self.resetSimulation)

@@ -11,15 +11,21 @@ class Simulation:
 
     def performStep(self):
         self.stepCounter += 1
-        print("Simulation step {} processed.".format(self.stepCounter))
+
         # We want each particle to move with a constant amount of time in between, so that the simulation looks smooth
         # ->Solution: Moving a particle with each step the program makes.
 
         self.moveParticle()
 
-        # We also want to update the state of the particle after moving it.
+        # We also want to change the state of the particles after contact with infected ones
 
-        self.changeState()
+        self.infectParticle()
+
+        # one day equals 120 steps or 2 seconds,
+        # we will also change the daysInfected and daysImmune for each particle each day
+        if self.stepCounter % 120 == 0:
+            self.changeStatus()
+            print("Days passed since the outbreak: {}".format(self.stepCounter/120))
 
     def getData(self):
         return self.stepCounter
@@ -31,8 +37,11 @@ class Simulation:
     # creates myParticle that holds the needed parameters for each particle
     def createParticle(self):
         for i in range(0, 50):
-            self.particleList[i] = model.myParticle.MyParticle(random.randint(0, 492), random.randint(0, 492), 8, 8) # Erstellen eines Partikel-Objekts
-            direction = random.randint(1, 4) # give the particle a random start-direction
+            # creating a particle object and saving it in a list
+            self.particleList[i] = model.myParticle.MyParticle(random.randint(0, 492), random.randint(0, 492))
+
+            # give the particle a random start-direction
+            direction = random.randint(1, 4)
             if direction == 1:
                 self.particleList[i].direction = "NO"
             if direction == 2:
@@ -42,8 +51,9 @@ class Simulation:
             if direction == 4:
                 self.particleList[i].direction = "NW"
 
-        for i in range(49, 50): # ToDo: Userinout, give amount of infected particles for start of simulation
+        for i in range(45, 50): # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
             self.particleList[i].status = "INFECTED"
+            self.particleList[i].daysInfected = random.randint(12, 14)  # ToDo: hardcoded, has to be interchangeable -> Idee: Frage nach average time, dann als min avg-2 und als max avg+2
 
     # moves the particle in a random direction, but will not let it go out of bounds
     def moveParticle(self):
@@ -52,15 +62,19 @@ class Simulation:
             if self.particleList[i].direction == "NO":
                 dx = 1
                 dy = -1
-            if self.particleList[i].direction == "NW":
+            elif self.particleList[i].direction == "NW":
                 dx = -1
                 dy = -1
-            if self.particleList[i].direction == "SO":
+            elif self.particleList[i].direction == "SO":
                 dx = 1
                 dy = 1
-            if self.particleList[i].direction == "SW":
+            elif self.particleList[i].direction == "SW":
                 dx = -1
                 dy = 1
+            else:
+                dx = 0
+                dy = 0
+
             # if possible, move the particle
             if 0 < self.particleList[i].x + dx < 492 and 0 < self.particleList[i].y + dy < 492:
                 self.particleList[i].x = self.particleList[i].x + dx
@@ -97,20 +111,41 @@ class Simulation:
                 # which in our case would not make a difference -> maybe i will change that
                 # for the sake of good code overview
 
-                # process the same particle again
+                # process through the same particle again
                 i = i - 1
 
     # will change the state of a particle after colliding with another
     # (ToDo/Question: Could this be made more efficient?)
-    def changeState(self):
+    def infectParticle(self):
         for i in range(0, 50):
             for j in range(0, 50):
-                riskOfInf = random.randint(0, 100)
+                riskOfInf = random.randint(0, 1000)
                 if i != j:
                     # ToDo: change "10" to a user-changeable variable as it can be configured
                     if abs(self.particleList[i].x - self.particleList[j].x) < 10 and \
                             abs(self.particleList[i].y - self.particleList[j].y) < 10 and \
-                            (self.particleList[i].status == "INFECTED" or self.particleList[j].status == "INFECTED"):  # an assembly of necessary conditions
+                            (self.particleList[i].status == "HEALTHY" and self.particleList[j].status == "INFECTED"):  # an assembly of necessary conditions
                         # accuracy has to be adjustable by the user ("< 10" -> infection radius)
-                        if riskOfInf < 5: # ToDo: variable name # -> just a reminder, not the actual risk as it is the random number # (0,5% would be the risk here)
+                        if riskOfInf < 1000: # ToDo: change hardcoded % to user input -> 1000*"eingestellter Wert" liefert das richtige Ergebnis
                             self.particleList[i].status = "INFECTED"
+                            self.particleList[i].daysInfected = random.randint(12, 14)  # ToDo: hardcoded infection time has to be interchangeable
+
+    def changeStatus(self):
+        for i in range(0, 50):
+            riskOfDeath = random.randint(0, 1000)
+            # disease process for an infected particle, if it survives it will be immune for a certain time
+            if self.particleList[i].daysInfected > 0:
+                self.particleList[i].daysInfected = self.particleList[i].daysInfected - 1
+                if riskOfDeath < 100:  # ToDo: Hardcoded 50 has to be interchangeable
+                    self.particleList[i].status = "DECEASED"
+                    self.particleList[i].direction = None
+                if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
+                    self.particleList[i].status = "IMMUNE"
+                    # + 1 because it will immediately be decremented in the same method once
+                    self.particleList[i].daysImmune = random.randint(4, 6) + 1  # ToDo: hardcoded immune time has to be interchangeable
+
+            # updating the immune time for an immune particle
+            if self.particleList[i].daysImmune > 0:
+                self.particleList[i].daysImmune = self.particleList[i].daysImmune - 1
+                if self.particleList[i].daysImmune == 0 and self.particleList[i].status == "IMMUNE":
+                    self.particleList[i].status = "HEALTHY"
