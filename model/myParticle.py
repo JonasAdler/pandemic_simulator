@@ -8,6 +8,7 @@ class MyParticle:
         self.height = 8
         self.direction = None  # possible directions: NW(Nord-West), NO(Nord-Ost), SW(Süd-West), SO(Süd-Ost)
         # self.status = healthconditions.HEALTHY  -> Enum eventuell überflüssig
-        self.status = "HEALTHY"  # possible status: HEALTHY, INFECTED, DECEASED, IMMUNE
+        self.status = "HEALTHY"  # possible status: HEALTHY, INFECTED, DECEASED, IMMUNE, QUARANTINED
         self.daysInfected = 0
         self.daysImmune = 0
+        self.daysQuarantined = 0

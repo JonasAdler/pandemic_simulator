@@ -29,6 +29,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.greenBrush = QBrush(Qt.green)
         self.greyBrush = QBrush(Qt.gray)
         self.yellowBrush = QBrush(Qt.yellow)
+        self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
 
     def connectSignals(self):
@@ -93,3 +94,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             elif particlelist[i].status == "IMMUNE":
                 ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
                                                      particlelist[i].height, self.pen, self.yellowBrush)
+            elif particlelist[i].status == "QUARANTINED":
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
+                                                     particlelist[i].height, self.pen, self.whiteBrush)
