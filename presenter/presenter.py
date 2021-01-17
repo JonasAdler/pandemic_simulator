@@ -35,7 +35,6 @@ class Presenter(QtCore.QObject):
         print("Hello World from Presenter")
         self.simulation = Simulation()
         self.ui.startSimulation()
-        # ToDo: change the button to a reset-Button (resetSimButton) -> maybe in view
 
     def pauseSimulation(self):
         self.isSimulationRunning = False
@@ -50,9 +49,16 @@ class Presenter(QtCore.QObject):
         self.ui.scene.clear()
         self.simulation = None
 
+    # hand the given quantityList-information back to the view after signaling the simulation about it
+    def exportCsv(self):
+        self.ui.exportCsv(self.simulation.getQuantityList())
+
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
         self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
+        self.ui.exportCsvSignal.connect(self.exportCsv)
+
+

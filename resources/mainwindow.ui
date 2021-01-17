@@ -46,6 +46,27 @@
            </layout>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Select initially infected entities:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="initiallyInfectedSpinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLabel" name="label_4">
@@ -78,6 +99,24 @@
                </widget>
               </item>
              </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Select granularity:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="granularitySpinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -133,6 +172,64 @@
                <double>0.010000000000000</double>
               </property>
              </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Select percentage of being quarantined:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="rateOfQuarantineSpinBox">
+              <property name="prefix">
+               <string/>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.001000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Select average infection-time:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="avgInfectionTimeSpinBox"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Select average immune-time:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="avgImmuneTimeSpinBox"/>
             </item>
            </layout>
           </item>
@@ -231,6 +328,13 @@
           </property>
           <property name="text">
            <string>Resume</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exportCsvButton">
+          <property name="text">
+           <string>Export</string>
           </property>
          </widget>
         </item>

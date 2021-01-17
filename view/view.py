@@ -1,6 +1,10 @@
+import csv
+
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QBrush, QPen
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
+
 from model.healthconditions import healthconditions
 from view.mainwindow import Ui_MainWindow
 
@@ -11,6 +15,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     pauseSimulationSignal = QtCore.pyqtSignal()
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
+    exportCsvSignal = QtCore.pyqtSignal()
 
     def __init__(self):
         super(View, self).__init__()
@@ -20,6 +25,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetSimButton.hide()
         self.resumeSimButton.hide()
         self.pauseSimButton.hide()
+        self.exportCsvButton.hide()
 
         self.connectSignals()
 
@@ -37,12 +43,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pauseSimButton.pressed.connect(self.pauseSimulationClicked)
         self.resumeSimButton.pressed.connect(self.resumeSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
+        self.exportCsvButton.pressed.connect(self.exportCsvClicked)
 
     def startSimulationClicked(self):
         self.startSimulationSignal.emit()
         self.startSimButton.hide()
         self.pauseSimButton.show()
         self.resetSimButton.show()
+        self.exportCsvButton.show()
 
     def pauseSimulationClicked(self):
         self.pauseSimulationSignal.emit()
@@ -59,8 +67,12 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetSimButton.hide()
         self.pauseSimButton.hide()
         self.resumeSimButton.hide()
+        self.exportCsvButton.hide()
         self.startSimButton.show()
 
+    def exportCsvClicked(self):
+        self.pauseSimulationClicked()
+        self.exportCsvSignal.emit()
 
     def startSimulation(self):
         print("SIMULATION STARTED!")
@@ -71,8 +83,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graphicsView_2.fitInView(0, 0, 500, 500)
 
     # returns the scene parameters to bound the movement area of the particles
-    def getSceneParamters(self):
-        return self.scene.width(), self.scene.height()
+    #def getSceneParamters(self):
+    #    return self.scene.width(), self.scene.height()
 
     # draws the particles on the scene with right color, quantity,...
     # -> needs to take an input for the amount of simulated particles later
@@ -83,17 +95,38 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for i in range(0, 50):
             if particlelist[i].status == "HEALTHY":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
-                                                     particlelist[i].height, self.pen, self.greenBrush)
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+                                                     8, self.pen, self.greenBrush)
             elif particlelist[i].status == "INFECTED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
-                                                     particlelist[i].height, self.pen, self.redBrush)
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+                                                     8, self.pen, self.redBrush)
             elif particlelist[i].status == "DECEASED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
-                                                     particlelist[i].height, self.pen, self.greyBrush)
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+                                                     8, self.pen, self.greyBrush)
             elif particlelist[i].status == "IMMUNE":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
-                                                     particlelist[i].height, self.pen, self.yellowBrush)
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+                                                     8, self.pen, self.yellowBrush)
             elif particlelist[i].status == "QUARANTINED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, particlelist[i].width,
-                                                     particlelist[i].height, self.pen, self.whiteBrush)
+                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+                                                     8, self.pen, self.whiteBrush)
+
+    # select granularity and save the csv to a selected path
+    def exportCsv(self, quantityList):
+        granularity = 5  # ToDo: Hardcoded -> VERY IMPORTANT to be changeable by the user until tuesday
+
+        # WARNING: The path has to be saved as a .csv manually, otherwise the program will crash
+        path, filetype = self.file_save()
+        if path and granularity:
+            with open(path, mode='w', newline='') as self.f:
+                self.writer = csv.writer(self.f)
+                fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
+                self.writer.writerow(fieldnames)
+                # self.writer.writerows(self.quantityList)
+                for i in range(0, len(quantityList), granularity):
+                    self.writer.writerow(quantityList[i])
+        else:
+            print("Something went wrong.")
+
+    def file_save(self):
+        return QFileDialog.getSaveFileName(self, "Save File")
+

@@ -1,36 +1,53 @@
 import random
 import model.myParticle
+import csv
 from model.healthconditions import healthconditions
-
 
 class Simulation:
     def __init__(self):
         print("Simulation Created")
+
         self.stepCounter = 0
-        self.countInf = None
-        self.countHealthy = None
-        self.countImmune = None
-        self.countDeceased = None
+
+        self.countInf = 5  # ToDo: hardcoded
+
+        self.countHealthy = 45  # ToDo: hardcoded
+        self.countImmune = 0
+        self.countDeceased = 0
+        self.quantityList = [[0, 45, 5, 0, 0]]  # ToDo: hardcoded
+
+
         self.particleList = {}
+
+        # create the selected amount of particles
         self.createParticle()
 
     def performStep(self):
+
         self.stepCounter += 1
 
-        # We want each particle to move with a constant amount of time in between, so that the simulation looks smooth
+        # we want each particle to move with a constant amount of time in between, so that the simulation looks smooth
         # ->Solution: Moving a particle with each step the program makes.
 
         self.moveParticle()
 
-        # We also want to change the state of the particles after contact with infected ones
+        # we also want to change the state of the particles after contact with infected ones
 
         self.infectParticle()
 
         # one day equals 120 steps or 2 seconds,
-        # we will also change the daysInfected and daysImmune for each particle each day
+        # we will also change attributes (e.g. daysInfected) for each particle each day -> changeStatus()
         if self.stepCounter % 120 == 0:
+
+            day = int(self.stepCounter / 120)
+
             self.changeStatus()
-            print("Days passed since the outbreak: {}".format(self.stepCounter / 120))
+
+            # log the quantity of each group inside a list of lists
+            self.quantityList.append([int(self.stepCounter/120), self.countHealthy, self.countInf, self.countImmune, self.countDeceased])
+            print("Days passed since the outbreak: {}".format(day))
+
+
 
     def getData(self):
         return self.stepCounter
@@ -39,20 +56,22 @@ class Simulation:
     def getParticleList(self):
         return self.particleList
 
-    # creates myParticle that holds the needed parameters for each particle
+    # returns the quantityList -> contains the quantity of each group for each day
+    def getQuantityList(self):
+        return self.quantityList
+
+    # creates myParticle that holds the necessary parameters for each particle
     def createParticle(self):
-        for i in range(0, 50):
+        for i in range(0, 50):  # ToDo: Hardgecoded, input
             # creating a particle object and saving it in a list
             self.particleList[i] = model.myParticle.MyParticle(random.randint(0, 492), random.randint(0, 492))
 
             # give the particle a random start-direction
             self.setDirection(i)
 
-        for i in range(45,
-                       50):  # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
+        for i in range(45, 50):  # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
             self.particleList[i].status = "INFECTED"
-            self.particleList[i].daysInfected = random.randint(12,
-                                                               14)  # ToDo: hardcoded, has to be interchangeable -> Idee: Frage nach average time, dann als min avg-2 und als max avg+2
+            self.particleList[i].daysInfected = random.randint(12, 14)  # ToDo: hardcoded, has to be interchangeable -> Idee: Frage nach average time, dann als min avg-2 und als max avg+2
 
     # moves the particle in a random direction, but will not let it go out of bounds
     def moveParticle(self):
@@ -118,17 +137,18 @@ class Simulation:
     def infectParticle(self):
         for i in range(0, 50):
             for j in range(0, 50):
-                riskOfInf = random.randint(0, 1000)
+                riskOfInf = random.randint(0, 999)
                 if i != j:
                     # ToDo: change "10" to a user-changeable variable as it can be configured
                     if abs(self.particleList[i].x - self.particleList[j].x) < 10 and \
                             abs(self.particleList[i].y - self.particleList[j].y) < 10 and \
-                            (self.particleList[i].status == "HEALTHY" and self.particleList[
-                                j].status == "INFECTED"):  # an assembly of necessary conditions
+                            (self.particleList[i].status == "HEALTHY" and
+                             self.particleList[j].status == "INFECTED"):  # an assembly of necessary conditions
                         # accuracy has to be adjustable by the user ("< 10" -> infection radius)
                         if riskOfInf < 200:  # ToDo: change hardcoded % to user input -> 1000*"eingestellter Wert" liefert das richtige Ergebnis
                             self.particleList[i].status = "INFECTED"
-                            self.particleList[i].daysInfected = random.randint(12, 14)  # ToDo: hardcoded infection time has to be interchangeable -> average infected time
+                            self.particleList[i].daysInfected = random.randint(12,
+                                                                               14)  # ToDo: hardcoded infection time has to be interchangeable -> average infected time
 
     # changes the behaviour of each particle for the different conditions
     def changeStatus(self):
@@ -146,20 +166,24 @@ class Simulation:
 
                 self.particleList[i].daysInfected = self.particleList[i].daysInfected - 1
 
-                if riskOfDeath < 5 and self.particleList[i].daysInfected > 0:  # ToDo: Hardcoded 5 has to be interchangeable -> risk of death
+                if riskOfDeath < 5 and self.particleList[
+                    i].daysInfected > 0:  # ToDo: Hardcoded 5 has to be interchangeable -> risk of death
                     self.particleList[i].status = "DECEASED"
                     self.particleList[i].direction = None
 
-                if riskOfQuarantine < 20 and self.particleList[i].daysInfected > 0:  # ToDo: Hardcoded 90 has to be interchangeable -> How many are quarantined
+                if riskOfQuarantine < 20 and self.particleList[
+                    i].daysInfected > 0:  # ToDo: Hardcoded 20 has to be interchangeable -> How many are quarantined
                     self.particleList[i].status = "QUARANTINED"
                     self.particleList[i].direction = None
-                    self.particleList[i].daysQuarantined = 5 + 1  # ToDo: 5 has to be interchangeable -> quarantine duration
+                    self.particleList[
+                        i].daysQuarantined = 5 + 1  # ToDo: 5 has to be interchangeable -> quarantine duration
                     self.particleList[i].daysInfected = 0
 
                 if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
                     self.particleList[i].status = "IMMUNE"
                     # + 1 because it will immediately be decremented in the same method once
-                    self.particleList[i].daysImmune = random.randint(4, 6) + 1  # ToDo: hardcoded immune time has to be interchangeable
+                    self.particleList[i].daysImmune = random.randint(4,
+                                                                     6) + 1  # ToDo: hardcoded immune time has to be interchangeable
 
             # reducing the quarantine time for quarantined particle
             if self.particleList[i].daysQuarantined > 0:
@@ -196,7 +220,6 @@ class Simulation:
 
             elif self.particleList[i].status == "DECEASED":
                 self.countDeceased = self.countDeceased + 1
-            # -> ToDo: DISPLAY THE COUNTERS IN ANY FORM, ist aber auch vorarbeit für den export und die livestatistik
 
     # gives random direction to particle at position "i"
     def setDirection(self, i):
