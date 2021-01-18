@@ -53,6 +53,9 @@ class Presenter(QtCore.QObject):
     def exportCsv(self):
         self.ui.exportCsv(self.simulation.getQuantityList())
 
+    #def changeRisk(self, risk):
+    #    self.simulation.changeRiskOfInfection(risk)
+
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
@@ -60,5 +63,6 @@ class Presenter(QtCore.QObject):
         self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.exportCsvSignal.connect(self.exportCsv)
+        #self.ui.riskOfInfectionSignal.connect(self.changeRisk)  # ToDo: vllt auch in Simulation -> Abkürzung über self.simulation.changeRiskOfInfection
 
 

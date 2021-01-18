@@ -16,6 +16,10 @@ class Simulation:
         self.countDeceased = 0
         self.quantityList = [[0, 45, 5, 0, 0]]  # ToDo: hardcoded
 
+        # ToDo: add variables for every hardcoded number in the "simulation" class -> self.riskOfInfection
+        # ToDo: add methods to change those values
+        #  -> Signal from presenter with the updated values to change the variables
+        self.riskOfInfection = 250  # 250 == 25% -> default value for now
 
         self.particleList = {}
 
@@ -59,6 +63,10 @@ class Simulation:
     # returns the quantityList -> contains the quantity of each group for each day
     def getQuantityList(self):
         return self.quantityList
+
+    # change risk of infection -> input is fractional number with three decimals
+    #def changeRiskOfInfection(self, risk):
+    #    self.riskOfInfection = risk * 1000
 
     # creates myParticle that holds the necessary parameters for each particle
     def createParticle(self):
@@ -139,13 +147,19 @@ class Simulation:
             for j in range(0, 50):
                 riskOfInf = random.randint(0, 999)
                 if i != j:
+                    # ToDo: Consider: Neuer Weg nach Kollision mit anderen Teilchen
+                    #if abs(self.particleList[i].x - self.particleList[j].x) < 10 and \
+                    #        abs(self.particleList[i].y - self.particleList[j].y) < 10:
+                    #    self.setDirection(i)
+
+
                     # ToDo: change "10" to a user-changeable variable as it can be configured
                     if abs(self.particleList[i].x - self.particleList[j].x) < 10 and \
                             abs(self.particleList[i].y - self.particleList[j].y) < 10 and \
                             (self.particleList[i].status == "HEALTHY" and
                              self.particleList[j].status == "INFECTED"):  # an assembly of necessary conditions
                         # accuracy has to be adjustable by the user ("< 10" -> infection radius)
-                        if riskOfInf < 200:  # ToDo: change hardcoded % to user input -> 1000*"eingestellter Wert" liefert das richtige Ergebnis
+                        if riskOfInf < 250:  # ToDo: change hardcoded % to user input -> 1000*"eingestellter Wert" liefert das richtige Ergebnis
                             self.particleList[i].status = "INFECTED"
                             self.particleList[i].daysInfected = random.randint(12,
                                                                                14)  # ToDo: hardcoded infection time has to be interchangeable -> average infected time

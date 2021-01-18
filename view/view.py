@@ -16,6 +16,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     exportCsvSignal = QtCore.pyqtSignal()
+    #riskOfInfectionSignal = QtCore.pyqtSignal(int)  #ToDo: Fragen -> Float?
 
     def __init__(self):
         super(View, self).__init__()
@@ -37,6 +38,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.yellowBrush = QBrush(Qt.yellow)
         self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
+        self.granularity = 1
 
     def connectSignals(self):
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -44,6 +46,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resumeSimButton.pressed.connect(self.resumeSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.exportCsvButton.pressed.connect(self.exportCsvClicked)
+        self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
+        #self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
+
+    # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
         self.startSimulationSignal.emit()
@@ -68,7 +74,15 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pauseSimButton.hide()
         self.resumeSimButton.hide()
         self.exportCsvButton.hide()
+        self.granularitySpinBox.setValue(1)
+        # ToDo: Inputs wieder auf Default-Werte zurücksetzten
         self.startSimButton.show()
+
+    def granularityChanged(self):
+        self.granularity = self.granularitySpinBox.value()
+
+    def riskOfInfectionChanged(self):
+        self.radiusSignal.emit(self.riskOfInfSpinBox.value()*1000)
 
     def exportCsvClicked(self):
         self.pauseSimulationClicked()
@@ -81,10 +95,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def updateScene(self):
         self.graphicsView_2.setScene(self.scene)
         self.graphicsView_2.fitInView(0, 0, 500, 500)
-
-    # returns the scene parameters to bound the movement area of the particles
-    #def getSceneParamters(self):
-    #    return self.scene.width(), self.scene.height()
 
     # draws the particles on the scene with right color, quantity,...
     # -> needs to take an input for the amount of simulated particles later
@@ -112,21 +122,21 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # select granularity and save the csv to a selected path
     def exportCsv(self, quantityList):
-        granularity = 5  # ToDo: Hardcoded -> VERY IMPORTANT to be changeable by the user until tuesday
 
         # WARNING: The path has to be saved as a .csv manually, otherwise the program will crash
-        path, filetype = self.file_save()
-        if path and granularity:
+        path, filetype = QFileDialog.getSaveFileName(self, "Save File")
+
+        # write to csv if path is given
+        if path and self.granularity:
             with open(path, mode='w', newline='') as self.f:
                 self.writer = csv.writer(self.f)
                 fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
                 self.writer.writerow(fieldnames)
-                # self.writer.writerows(self.quantityList)
-                for i in range(0, len(quantityList), granularity):
+                self.writer.writerow(quantityList[0])
+                for i in range(self.granularity, len(quantityList), self.granularity):
                     self.writer.writerow(quantityList[i])
         else:
             print("Something went wrong.")
 
-    def file_save(self):
-        return QFileDialog.getSaveFileName(self, "Save File")
+
 
