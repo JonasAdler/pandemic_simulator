@@ -1,0 +1,20 @@
+- view:
+	drawItems() anzahl der partikel noch hartcodiert ->stattdessen länge der partikelliste nutzen, wenn das iterieren hier stattfinden soll
+	
+	export wie besprochen sobald der pfad und die granularität bestimmt sind weitergeben
+
+-simulation.py
+	createParticle ->richtiges todo: nicht hardgecoded, sondern anzahl 
+	vom presenter über die view geben lassen :)
+
+
+	moveParticle: haben wir besprochen
+
+	infectparticle - berechnet die kollision? und ändert gleichzeitig den 
+	status?
+	 	besser eine Methode: collidesWith(p:Particle) in der particle klasse implementieren die nur das abprüft und danach in der simulation die statusänderung entsprechend ändern
+
+	changeStatus
+		hab ich nicht sofort verstanden was die alles 
+		macht, kann man also wsl aufteilen
+
