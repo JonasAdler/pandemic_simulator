@@ -10,3 +10,4 @@ class MyParticle:
         self.daysInfected = 0
         self.daysImmune = 0
         self.daysQuarantined = 0
+

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1142</width>
-    <height>744</height>
+    <height>751</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +25,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select amount of entities (1- 100): </string>
               </property>
@@ -49,6 +55,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
              <widget class="QLabel" name="label_10">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select initially infected entities:</string>
               </property>
@@ -70,6 +82,14 @@
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <italic>false</italic>
+                <bold>true</bold>
+                <strikeout>false</strikeout>
+               </font>
+              </property>
               <property name="text">
                <string>Select modifier:</string>
               </property>
@@ -106,6 +126,18 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLabel" name="label_11">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="mouseTracking">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>If granularity = 1, every day gets exported, if granularity = 2, every second day gets exported,...</string>
+              </property>
               <property name="text">
                <string>Select granularity:</string>
               </property>
@@ -115,6 +147,9 @@
              <widget class="QSpinBox" name="granularitySpinBox">
               <property name="minimum">
                <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
               </property>
              </widget>
             </item>
@@ -128,6 +163,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select risk of infection: </string>
               </property>
@@ -135,17 +176,14 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="riskOfInfSpinBox">
-              <property name="decimals">
-               <number>3</number>
-              </property>
               <property name="maximum">
-               <double>1.000000000000000</double>
+               <double>100.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>0.010000000000000</double>
+               <double>0.100000000000000</double>
               </property>
               <property name="value">
-               <double>0.000000000000000</double>
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -155,6 +193,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLabel" name="label_3">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select rate of death</string>
               </property>
@@ -162,14 +206,14 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="rateOfDeathSpinBox">
-              <property name="decimals">
-               <number>3</number>
-              </property>
               <property name="maximum">
-               <double>1.000000000000000</double>
+               <double>100.000000000000000</double>
               </property>
               <property name="singleStep">
-               <double>0.010000000000000</double>
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -179,27 +223,27 @@
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
              <widget class="QLabel" name="label_7">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select percentage of being quarantined:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="rateOfQuarantineSpinBox">
-              <property name="prefix">
-               <string/>
-              </property>
+             <widget class="QDoubleSpinBox" name="percentageQuarantineSpinBox">
               <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="maximum">
-               <double>1.000000000000000</double>
+               <number>1</number>
               </property>
               <property name="singleStep">
-               <double>0.001000000000000</double>
+               <double>0.100000000000000</double>
               </property>
               <property name="value">
-               <double>0.500000000000000</double>
+               <double>20.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -209,13 +253,26 @@
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
              <widget class="QLabel" name="label_8">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
-               <string>Select average infection-time:</string>
+               <string>Select average infectied-time:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="avgInfectionTimeSpinBox"/>
+             <widget class="QSpinBox" name="avgInfectionTimeSpinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>60</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -223,13 +280,56 @@
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
              <widget class="QLabel" name="label_9">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Select average immune-time:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="avgImmuneTimeSpinBox"/>
+             <widget class="QSpinBox" name="avgImmuneTimeSpinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <item>
+             <widget class="QLabel" name="infectionRadiusSpinBox">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Select infection radius:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -295,6 +395,46 @@
            <widget class="QGraphicsView" name="graphicsView_3"/>
           </item>
          </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_16">
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Speed of simulation:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="speedOfSimSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="invertedControls">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>

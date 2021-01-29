@@ -3,6 +3,7 @@ from PyQt5 import QtCore
 from view.view import View
 from model.simulation import Simulation
 
+import csv
 FPS = 60
 
 class Presenter(QtCore.QObject):
@@ -49,9 +50,24 @@ class Presenter(QtCore.QObject):
         self.ui.scene.clear()
         self.simulation = None
 
-    # hand the given quantityList-information back to the view after signaling the simulation about it
+    # hand the given parameters with the quantityList to the write-Operation
     def exportCsv(self):
-        self.ui.exportCsv(self.simulation.getQuantityList())
+        path, filetype, granularity = self.ui.getExportParameters()
+        self.writeInCsv(path, filetype, granularity, self.simulation.getQuantityList())
+
+    # writes to the csv
+    def writeInCsv(self, path, filetype, granularity, quantityList):
+        if path and granularity:
+            with open(path, mode='w', newline='') as self.f:
+                self.writer = csv.writer(self.f)
+                fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
+                self.writer.writerow(fieldnames)
+                self.writer.writerow(quantityList[0])
+                for i in range(granularity, len(quantityList), granularity):
+                    self.writer.writerow(quantityList[i])
+        else:
+            print("Something went wrong.")
+        self.f.close()
 
     #def changeRisk(self, risk):
     #    self.simulation.changeRiskOfInfection(risk)

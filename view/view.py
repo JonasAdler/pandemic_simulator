@@ -16,7 +16,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     exportCsvSignal = QtCore.pyqtSignal()
-    #riskOfInfectionSignal = QtCore.pyqtSignal(int)  #ToDo: Fragen -> Float?
+
+    infectionRadiusSignal = QtCore.pyqtSignal(int)
+    riskOfInfectionSignal = QtCore.pyqtSignal(int)  #ToDo: Fragen -> Float?
+    rateOfDeathSignal = QtCore.pyqtSignal(int)
+    riskOfQuarantine = QtCore.pyqtSignal(int)
+    avgInfectionTimeSignal = QtCore.pyqtSignal(int)
+    avgImmuneTimeSignal = QtCore.pyqtSignal(int)
+
 
     def __init__(self):
         super(View, self).__init__()
@@ -38,17 +45,32 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.yellowBrush = QBrush(Qt.yellow)
         self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
+
+        # initialize default values -> only change-methods needed -> ToDo: "Wollen sie die Parameter zurücksetzen?" bei Reset -> Nach Milestone
         self.granularity = 1
+        self.riskOfInfection = 5
+        self.rateOfDeath = 1
+        self.riskOfQuarantine = 20
+        self.avgInfectedTime = 14
+        self.avgImmuneTime = 15
+        self.infectionRadius = 8
 
     def connectSignals(self):
+        # buttons
         self.startSimButton.pressed.connect(self.startSimulationClicked)
         self.pauseSimButton.pressed.connect(self.pauseSimulationClicked)
         self.resumeSimButton.pressed.connect(self.resumeSimulationClicked)
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.exportCsvButton.pressed.connect(self.exportCsvClicked)
-        self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
-        #self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
 
+        # parameters
+        self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
+        self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
+        self.rateOfDeathSpinBox.valueChanged.connect(self.rateOfDeathChanged)
+        self.percentageQuarantineSpinBox.valueChanged.connect(self.percentageOfQuarantineChanged)
+        self.avgImmuneTimeSpinBox.valueChanged.connect(self.avgImmuneTimeChanged)
+        self.avgInfectionTimeSpinBox.valueChanged.connect(self.avgInfectedTimeChanged)
+        self.spinBox.valueChanged.connect(self.infectionRadiusChanged)
     # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
@@ -82,7 +104,23 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.granularity = self.granularitySpinBox.value()
 
     def riskOfInfectionChanged(self):
-        self.radiusSignal.emit(self.riskOfInfSpinBox.value()*1000)
+        print("riskOfInf")
+        #self.radiusSignal.emit(self.riskOfInfSpinBox.value())
+
+    def rateOfDeathChanged(self):
+        print("rate")
+
+    def percentageOfQuarantineChanged(self):
+        print("pOQ")
+
+    def avgInfectedTimeChanged(self):
+        print("avgInf")
+
+    def avgImmuneTimeChanged(self):
+        print("avgImm")
+
+    def infectionRadiusChanged(self):
+        print("inf")
 
     def exportCsvClicked(self):
         self.pauseSimulationClicked()
@@ -98,45 +136,36 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # draws the particles on the scene with right color, quantity,...
     # -> needs to take an input for the amount of simulated particles later
-    def drawItems(self, particlelist):
+    def drawItems(self, particleList):
 
         # clear the scene to remove the old and outdated items, then draw new ones
         self.scene.clear()
 
-        for i in range(0, 50):
-            if particlelist[i].status == "HEALTHY":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+        for i in range(len(particleList)):
+            if particleList[i].status == "HEALTHY":
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
                                                      8, self.pen, self.greenBrush)
-            elif particlelist[i].status == "INFECTED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+            elif particleList[i].status == "INFECTED":
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
                                                      8, self.pen, self.redBrush)
-            elif particlelist[i].status == "DECEASED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+            elif particleList[i].status == "DECEASED":
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
                                                      8, self.pen, self.greyBrush)
-            elif particlelist[i].status == "IMMUNE":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+            elif particleList[i].status == "IMMUNE":
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
                                                      8, self.pen, self.yellowBrush)
-            elif particlelist[i].status == "QUARANTINED":
-                ellipse_item = self.scene.addEllipse(particlelist[i].x, particlelist[i].y, 8,
+            elif particleList[i].status == "QUARANTINED":
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
                                                      8, self.pen, self.whiteBrush)
 
-    # select granularity and save the csv to a selected path
-    def exportCsv(self, quantityList):
+    # get user input path and return parameters for export
+    def getExportParameters(self):
 
         # WARNING: The path has to be saved as a .csv manually, otherwise the program will crash
         path, filetype = QFileDialog.getSaveFileName(self, "Save File")
 
-        # write to csv if path is given
-        if path and self.granularity:
-            with open(path, mode='w', newline='') as self.f:
-                self.writer = csv.writer(self.f)
-                fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
-                self.writer.writerow(fieldnames)
-                self.writer.writerow(quantityList[0])
-                for i in range(self.granularity, len(quantityList), self.granularity):
-                    self.writer.writerow(quantityList[i])
-        else:
-            print("Something went wrong.")
+        # return the path (and the filetype)
+        return path, filetype, self.granularity
 
 
 
