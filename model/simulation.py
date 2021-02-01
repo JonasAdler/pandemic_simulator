@@ -81,7 +81,7 @@ class Simulation:
 
     # creates myParticle that holds the necessary parameters for each particle
     def createParticle(self):
-        for i in range(self.amountOfParticles):  # ToDo: Hardgecoded, input
+        for i in range(self.amountOfParticles):
             # creating a particle object and saving it in a list
             self.particleList[i] = model.myParticle.MyParticle(random.randint(0, self.boundary), random.randint(0, self.boundary))
 
@@ -89,9 +89,9 @@ class Simulation:
             self.setDirection(i)
 
         # infect
-        for i in range(self.initiallyInfected):  # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
+        for i in range(self.initiallyInfected):
             self.particleList[i].status = "INFECTED"
-            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  # ToDo: hardcoded, has to be interchangeable -> Idee: Frage nach average time, dann als min avg-2 und als max avg+2
+            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)
 
     # moves the particle in a random direction, but will not let it go out of bounds
     def moveParticle(self):
@@ -158,11 +158,11 @@ class Simulation:
                         # either "i" is infected infects "j"...
                         if (self.particleList[i].status == "INFECTED") and (self.particleList[j].status == "HEALTHY"):
                             self.particleList[j].status = "INFECTED"
-                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)
+                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
                         # ...or "i" is healthy and gets infected by "j"
                         if (self.particleList[i].status == "HEALTHY") and (self.particleList[j].status == "INFECTED"):
                             self.particleList[i].status = "INFECTED"
-                            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)
+                            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
 
     # changes the behaviour of each particle for the different conditions
     def changeStatus(self):
@@ -208,14 +208,14 @@ class Simulation:
         if randomQuarantine < self.riskOfQuarantine and self.particleList[i].daysInfected > 0:
             self.particleList[i].status = "QUARANTINED"
             self.particleList[i].direction = None
-            self.particleList[i].daysQuarantined = 5 + 1
+            self.particleList[i].daysQuarantined = self.particleList[i].daysInfected + 1
             self.particleList[i].daysInfected = 0
 
         # if the particle survived the infection -> set the status to "IMMUNE"
         if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
             self.particleList[i].status = "IMMUNE"
             # + 1 because it will immediately be decremented in the same method once
-            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
 
     # reduce quarantine-days
     def updateQuarantined(self, i, randomDeath):
@@ -229,7 +229,7 @@ class Simulation:
         # release one from quarantine after time is over
         if self.particleList[i].daysQuarantined == 0 and self.particleList[i].status == "QUARANTINED":
             self.particleList[i].status = "IMMUNE"
-            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 3, self.avgImmuneDays + 3) + 1
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
             self.setDirection(i)  # if the particle was quarantined it needs a new direction
 
     # reduce immune-days
