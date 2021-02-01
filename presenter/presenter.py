@@ -23,6 +23,7 @@ class Presenter(QtCore.QObject):
 
         self._connectUIElements()
 
+    # perform the steps and draw the items on the scene for each step while the simulation is running
     def mainLoop(self):
         if self.isSimulationRunning:
             self.simulation.performStep()
@@ -30,21 +31,24 @@ class Presenter(QtCore.QObject):
             self.ui.updateScene()
             #self.ui.updateData(self.simulation.getData())
 
-
-    def startSimulation(self):
+    # create the simulation and hand it all the predetermined values
+    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
-        self.simulation = Simulation()
+        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius)
         self.ui.startSimulation()
 
+    # pause the simulation
     def pauseSimulation(self):
         self.isSimulationRunning = False
         print("Simulation is paused at {} days.".format(self.simulation.stepCounter/120))
 
+    # resume the simulation
     def resumeSiumlation(self):
         self.isSimulationRunning = True
         print("Resuming the simulation!")
 
+    # reset the simulation
     def resetSimulation(self):
         self.isSimulationRunning = False
         self.ui.scene.clear()
@@ -53,24 +57,26 @@ class Presenter(QtCore.QObject):
     # hand the given parameters with the quantityList to the write-Operation
     def exportCsv(self):
         path, filetype, granularity = self.ui.getExportParameters()
-        self.writeInCsv(path, filetype, granularity, self.simulation.getQuantityList())
+        if path and granularity:
+            self.writeInCsv(path, filetype, granularity, self.simulation.getQuantityList())
+        else:
+            print("Something went wrong.")
 
     # writes to the csv
     def writeInCsv(self, path, filetype, granularity, quantityList):
-        if path and granularity:
-            with open(path, mode='w', newline='') as self.f:
-                self.writer = csv.writer(self.f)
-                fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
-                self.writer.writerow(fieldnames)
-                self.writer.writerow(quantityList[0])
-                for i in range(granularity, len(quantityList), granularity):
-                    self.writer.writerow(quantityList[i])
-        else:
-            print("Something went wrong.")
+        with open(path, mode='w', newline='') as self.f:
+            self.writer = csv.writer(self.f)
+            fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
+            self.writer.writerow(fieldnames)
+            self.writer.writerow(quantityList[0])
+            for i in range(granularity, len(quantityList), granularity):
+                self.writer.writerow(quantityList[i])
         self.f.close()
 
-    #def changeRisk(self, risk):
-    #    self.simulation.changeRiskOfInfection(risk)
+    # if a simulation has been created, change the risk of infection in the simulation
+    def changeRisk(self, risk):
+        if self.simulation:
+            self.simulation.changeRiskOfInfection(risk)
 
     def _connectUIElements(self) -> None:
         # elements of the main window
@@ -79,6 +85,7 @@ class Presenter(QtCore.QObject):
         self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.exportCsvSignal.connect(self.exportCsv)
-        #self.ui.riskOfInfectionSignal.connect(self.changeRisk)  # ToDo: vllt auch in Simulation -> Abkürzung über self.simulation.changeRiskOfInfection
+        self.ui.riskOfInfectionSignal.connect(self.changeRisk)
+
 
 

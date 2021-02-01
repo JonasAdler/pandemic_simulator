@@ -4,38 +4,43 @@ import csv
 from model.healthconditions import healthconditions
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius):
         print("Simulation Created")
 
         self.stepCounter = 0
-
-        self.countInf = 5  # ToDo: hardcoded
-
-        self.countHealthy = 45  # ToDo: hardcoded
-        self.countImmune = 0
-        self.countDeceased = 0
-        self.quantityList = [[0, 45, 5, 0, 0]]  # ToDo: hardcoded
 
         self.boundary = 492
 
         # ToDo: add variables for every hardcoded number in the "simulation" class -> self.riskOfInfection
         # ToDo: add methods to change those values
         #  -> Signal from presenter with the updated values to change the variables
-        self.amountOfParticles = 75
-        self.riskOfInfection = 1000  # 250 == 25% -> default value for now
-        self.avgInfectedTime = 13
-        self.infectionRadius = 10
-        self.initiallyInfected = 5
-        self.rateOfDeath = 50
-        self.avgImmuneDays = 20
-        self.riskOfQuarantine = 5
+        # default-parameters for all the necessary values
+        self.amountOfParticles = amountOfParticles
+        self.initiallyInfected = initiallyInfected
+        self.riskOfInfection = riskOfInfection
+        self.rateOfDeath = rateOfDeath
+        self.riskOfQuarantine = riskOfQuarantine
+        self.avgInfectedTime = avgInfectedTime
+        self.avgImmuneDays = avgImmuneTime
+        self.infectionRadius = infectionRadius
         self.dayLength = 120
+
+        self.countHealthy = amountOfParticles - initiallyInfected
+        self.countInf = initiallyInfected
+        self.countImmune = 0
+        self.countDeceased = 0
+        self.quantityList = [[0, self.countHealthy, self.countInf, self.countImmune, self.countDeceased]]
 
         self.particleList = {}
 
         # create the selected amount of particles
         self.createParticle()
 
+    # changes the risk of infection
+    def changeRiskOfInfection(self, rOI):
+        self.riskOfInfection = rOI
+
+    # perform a step
     def performStep(self):
 
         self.stepCounter += 1
@@ -74,10 +79,6 @@ class Simulation:
     def getQuantityList(self):
         return self.quantityList
 
-    # change risk of infection -> input is fractional number with three decimals
-    #def changeRiskOfInfection(self, risk):
-    #    self.riskOfInfection = risk * 1000
-
     # creates myParticle that holds the necessary parameters for each particle
     def createParticle(self):
         for i in range(self.amountOfParticles):  # ToDo: Hardgecoded, input
@@ -87,7 +88,8 @@ class Simulation:
             # give the particle a random start-direction
             self.setDirection(i)
 
-        for i in range(45, 50):  # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
+        # infect
+        for i in range(self.initiallyInfected):  # ToDo: user input, give amount of infected particles for start of simulation, zudem ist das hier provisorisch und sollte besser implementiert werden
             self.particleList[i].status = "INFECTED"
             self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  # ToDo: hardcoded, has to be interchangeable -> Idee: Frage nach average time, dann als min avg-2 und als max avg+2
 
@@ -146,19 +148,17 @@ class Simulation:
                 i = i - 1
 
     # will change the state of a particle after colliding with another
-    # (ToDo/Question: Could this be made more efficient?)
     def infectParticle(self):
         for i in range(self.amountOfParticles - 1):
             for j in range(i + 1, self.amountOfParticles):
                 randomRisk = random.randint(0, 999)
-                # ToDo: change "infRadius" to a user-changeable variable as it can be configured
                 if abs(self.particleList[i].x - self.particleList[j].x) < self.infectionRadius and \
                         abs(self.particleList[i].y - self.particleList[j].y) < self.infectionRadius:
-                    #if randomRisk < self.riskOfInfection:  # ToDo: change hardcoded % to user input -> 1000*"eingestellter Wert" liefert das richtige Ergebnis
+                    if randomRisk < self.riskOfInfection:
                         # either "i" is infected infects "j"...
                         if (self.particleList[i].status == "INFECTED") and (self.particleList[j].status == "HEALTHY"):
                             self.particleList[j].status = "INFECTED"
-                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  # ToDo: hardcoded infection time has to be interchangeable -> average infected time
+                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)
                         # ...or "i" is healthy and gets infected by "j"
                         if (self.particleList[i].status == "HEALTHY") and (self.particleList[j].status == "INFECTED"):
                             self.particleList[i].status = "INFECTED"
@@ -199,28 +199,33 @@ class Simulation:
 
         self.particleList[i].daysInfected = self.particleList[i].daysInfected - 1
 
-        if randomDeath < self.rateOfDeath and self.particleList[i].daysInfected > 0:  # ToDo: Hardcoded 5 has to be interchangeable -> risk of death
+        # if a particle is still infected and the probability occurs -> kill the particle
+        if randomDeath < self.rateOfDeath and self.particleList[i].daysInfected > 0:
             self.particleList[i].status = "DECEASED"
             self.particleList[i].direction = None
 
-        if randomQuarantine < self.riskOfQuarantine and self.particleList[i].daysInfected > 0:  # ToDo: Hardcoded 20 has to be interchangeable -> How many are quarantined
+        # if a particle is still infected and the probability occurs -> quarantine the particle
+        if randomQuarantine < self.riskOfQuarantine and self.particleList[i].daysInfected > 0:
             self.particleList[i].status = "QUARANTINED"
             self.particleList[i].direction = None
-            self.particleList[i].daysQuarantined = 5 + 1  # ToDo: 5 has to be interchangeable -> quarantine duration
+            self.particleList[i].daysQuarantined = 5 + 1
             self.particleList[i].daysInfected = 0
 
+        # if the particle survived the infection -> set the status to "IMMUNE"
         if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
             self.particleList[i].status = "IMMUNE"
             # + 1 because it will immediately be decremented in the same method once
-            self.particleList[i].daysImmune = random.randint(4, 6) + 1  # ToDo: hardcoded immune time has to be interchangeable
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1
 
     # reduce quarantine-days
     def updateQuarantined(self, i, randomDeath):
         self.particleList[i].daysQuarantined = self.particleList[i].daysQuarantined - 1
+
         # particles can still die in quarantine
         if randomDeath < self.rateOfDeath and self.particleList[i].daysQuarantined > 0:
             self.particleList[i].status = "DECEASED"
             self.particleList[i].direction = None
+
         # release one from quarantine after time is over
         if self.particleList[i].daysQuarantined == 0 and self.particleList[i].status == "QUARANTINED":
             self.particleList[i].status = "IMMUNE"

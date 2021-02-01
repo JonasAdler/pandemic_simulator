@@ -11,14 +11,14 @@ from view.mainwindow import Ui_MainWindow
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal()
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int)
     pauseSimulationSignal = QtCore.pyqtSignal()
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
     exportCsvSignal = QtCore.pyqtSignal()
 
     infectionRadiusSignal = QtCore.pyqtSignal(int)
-    riskOfInfectionSignal = QtCore.pyqtSignal(int)  #ToDo: Fragen -> Float?
+    riskOfInfectionSignal = QtCore.pyqtSignal(int)
     rateOfDeathSignal = QtCore.pyqtSignal(int)
     riskOfQuarantine = QtCore.pyqtSignal(int)
     avgInfectionTimeSignal = QtCore.pyqtSignal(int)
@@ -47,13 +47,13 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pen = QPen(Qt.black)
 
         # initialize default values -> only change-methods needed -> ToDo: "Wollen sie die Parameter zurücksetzen?" bei Reset -> Nach Milestone
-        self.granularity = 1
-        self.riskOfInfection = 5
-        self.rateOfDeath = 1
-        self.riskOfQuarantine = 20
-        self.avgInfectedTime = 14
-        self.avgImmuneTime = 15
-        self.infectionRadius = 8
+        self.granularity = self.granularitySpinBox.value()
+        self.riskOfInfection = self.riskOfInfSpinBox.value()
+        self.rateOfDeath = self.rateOfDeathSpinBox.value()
+        self.riskOfQuarantine = self.percentageQuarantineSpinBox.value()
+        self.avgInfectedTime = self.avgInfectionTimeSpinBox.value()
+        self.avgImmuneTime = self.avgImmuneTimeSpinBox.value()
+        self.infectionRadius = self.spinBox.value()  #ToDo: SpinBox -> InfectionRadiusSpinBox
 
     def connectSignals(self):
         # buttons
@@ -70,15 +70,20 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.percentageQuarantineSpinBox.valueChanged.connect(self.percentageOfQuarantineChanged)
         self.avgImmuneTimeSpinBox.valueChanged.connect(self.avgImmuneTimeChanged)
         self.avgInfectionTimeSpinBox.valueChanged.connect(self.avgInfectedTimeChanged)
-        self.spinBox.valueChanged.connect(self.infectionRadiusChanged)
+        self.spinBox.valueChanged.connect(self.infectionRadiusChanged)  #ToDo: SpinBox -> InfectionRadiusSpinBox
     # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
-        self.startSimulationSignal.emit()
-        self.startSimButton.hide()
-        self.pauseSimButton.show()
-        self.resetSimButton.show()
-        self.exportCsvButton.show()
+        if self.entitiesSpinBox.value() >= self.initiallyInfectedSpinBox.value():
+            self.startSimulationSignal.emit(self.entitiesSpinBox.value(), self.initiallyInfectedSpinBox.value(),
+                                            self.riskOfInfection*10, self.rateOfDeath*10, self.riskOfQuarantine*10,
+                                            self.avgInfectedTime, self.avgImmuneTime, self.infectionRadius)
+            self.startSimButton.hide()
+            self.pauseSimButton.show()
+            self.resetSimButton.show()
+            self.exportCsvButton.show()
+        else:
+            self.errorTooManyInfected()
 
     def pauseSimulationClicked(self):
         self.pauseSimulationSignal.emit()
@@ -96,16 +101,15 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pauseSimButton.hide()
         self.resumeSimButton.hide()
         self.exportCsvButton.hide()
+        self.startSimButton.show()
         self.granularitySpinBox.setValue(1)
         # ToDo: Inputs wieder auf Default-Werte zurücksetzten
-        self.startSimButton.show()
 
     def granularityChanged(self):
         self.granularity = self.granularitySpinBox.value()
 
     def riskOfInfectionChanged(self):
-        print("riskOfInf")
-        #self.radiusSignal.emit(self.riskOfInfSpinBox.value())
+        self.riskOfInfectionSignal.emit(self.riskOfInfSpinBox.value()*10)  # "*10" to get a whole number
 
     def rateOfDeathChanged(self):
         print("rate")
@@ -167,5 +171,11 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # return the path (and the filetype)
         return path, filetype, self.granularity
 
-
+    def errorTooManyInfected(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("ERROR")
+        msg.setText("The amount of initially infected particles exceeds the total amount of particles!")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setStandardButtons(QMessageBox.Close)
+        x = msg.exec()
 
