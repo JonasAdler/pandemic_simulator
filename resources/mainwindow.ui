@@ -32,7 +32,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Select amount of entities (1- 100): </string>
+               <string>Select amount of entities (1- 200): </string>
               </property>
              </widget>
             </item>
@@ -42,7 +42,10 @@
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>100</number>
+               <number>200</number>
+              </property>
+              <property name="value">
+               <number>50</number>
               </property>
               <property name="displayIntegerBase">
                <number>10</number>
@@ -72,7 +75,10 @@
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>100</number>
+               <number>200</number>
+              </property>
+              <property name="value">
+               <number>5</number>
               </property>
              </widget>
             </item>
@@ -170,7 +176,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Select risk of infection: </string>
+               <string>Select risk of infection in percent: </string>
               </property>
              </widget>
             </item>
@@ -200,7 +206,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Select rate of death</string>
+               <string>Select rate of death in percent:</string>
               </property>
              </widget>
             </item>
@@ -272,6 +278,9 @@
               <property name="maximum">
                <number>60</number>
               </property>
+              <property name="value">
+               <number>7</number>
+              </property>
              </widget>
             </item>
            </layout>
@@ -299,6 +308,9 @@
               <property name="maximum">
                <number>999</number>
               </property>
+              <property name="value">
+               <number>10</number>
+              </property>
              </widget>
             </item>
            </layout>
@@ -319,7 +331,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="QSpinBox" name="infectionRadiusSpinBox_2">
               <property name="minimum">
                <number>1</number>
               </property>
@@ -393,6 +405,62 @@
           </item>
           <item>
            <widget class="QGraphicsView" name="graphicsView_3"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QLabel" name="label_13">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Current Day:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="daysPassedLCD">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="midLineWidth">
+               <number>0</number>
+              </property>
+              <property name="smallDecimalPoint">
+               <bool>false</bool>
+              </property>
+              <property name="segmentStyle">
+               <enum>QLCDNumber::Filled</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_14">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Infected:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="percentageInfectedLCD"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>

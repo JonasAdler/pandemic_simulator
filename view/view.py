@@ -46,14 +46,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
 
-        # initialize default values -> only change-methods needed -> ToDo: "Wollen sie die Parameter zurücksetzen?" bei Reset -> Nach Milestone
+        # ToDo: "Wollen sie die Parameter zurücksetzen?" bei Reset -> Nach Milestone
         self.granularity = self.granularitySpinBox.value()
-        self.riskOfInfection = self.riskOfInfSpinBox.value()
-        self.rateOfDeath = self.rateOfDeathSpinBox.value()
-        self.riskOfQuarantine = self.percentageQuarantineSpinBox.value()
-        self.avgInfectedTime = self.avgInfectionTimeSpinBox.value()
-        self.avgImmuneTime = self.avgImmuneTimeSpinBox.value()
-        self.infectionRadius = self.spinBox.value()  #ToDo: SpinBox -> InfectionRadiusSpinBox
 
     def connectSignals(self):
         # buttons
@@ -70,18 +64,22 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.percentageQuarantineSpinBox.valueChanged.connect(self.percentageOfQuarantineChanged)
         self.avgImmuneTimeSpinBox.valueChanged.connect(self.avgImmuneTimeChanged)
         self.avgInfectionTimeSpinBox.valueChanged.connect(self.avgInfectedTimeChanged)
-        self.spinBox.valueChanged.connect(self.infectionRadiusChanged)  #ToDo: SpinBox -> InfectionRadiusSpinBox
+        self.infectionRadiusSpinBox_2.valueChanged.connect(self.infectionRadiusChanged)
+
     # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
         if self.entitiesSpinBox.value() >= self.initiallyInfectedSpinBox.value():
             self.startSimulationSignal.emit(self.entitiesSpinBox.value(), self.initiallyInfectedSpinBox.value(),
-                                            self.riskOfInfection*10, self.rateOfDeath*10, self.riskOfQuarantine*10,
-                                            self.avgInfectedTime, self.avgImmuneTime, self.infectionRadius)
+                                            self.riskOfInfSpinBox.value()*10, self.rateOfDeathSpinBox.value()*10,
+                                            self.percentageQuarantineSpinBox.value()*10,
+                                            self.avgInfectionTimeSpinBox.value(),
+                                            self.avgImmuneTimeSpinBox.value(), self.infectionRadiusSpinBox_2.value())
             self.startSimButton.hide()
             self.pauseSimButton.show()
             self.resetSimButton.show()
             self.exportCsvButton.show()
+        # if there are more particles initially infected than total
         else:
             self.errorTooManyInfected()
 
@@ -179,3 +177,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         msg.setStandardButtons(QMessageBox.Close)
         x = msg.exec()
 
+    def updateLCD(self, days, quantityList):
+        self.daysPassedLCD.display(days)
+        self.percentageInfectedLCD.display(quantityList[days][2]/self.entitiesSpinBox.value())

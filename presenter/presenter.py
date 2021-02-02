@@ -29,6 +29,7 @@ class Presenter(QtCore.QObject):
             self.simulation.performStep()
             self.ui.drawItems(self.simulation.getParticleList())
             self.ui.updateScene()
+            self.ui.updateLCD(self.simulation.getData(), self.simulation.getQuantityList())
             #self.ui.updateData(self.simulation.getData())
 
     # create the simulation and hand it all the predetermined values

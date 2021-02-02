@@ -11,9 +11,6 @@ class Simulation:
 
         self.boundary = 492
 
-        # ToDo: add variables for every hardcoded number in the "simulation" class -> self.riskOfInfection
-        # ToDo: add methods to change those values
-        #  -> Signal from presenter with the updated values to change the variables
         # default-parameters for all the necessary values
         self.amountOfParticles = amountOfParticles
         self.initiallyInfected = initiallyInfected
@@ -69,7 +66,7 @@ class Simulation:
 
 
     def getData(self):
-        return self.stepCounter
+        return int(self.stepCounter / self.dayLength)
 
     # returns the list of myParticles to the presenter
     def getParticleList(self):
@@ -151,7 +148,7 @@ class Simulation:
     def infectParticle(self):
         for i in range(self.amountOfParticles - 1):
             for j in range(i + 1, self.amountOfParticles):
-                randomRisk = random.randint(0, 999)
+                randomRisk = random.randint(0, 1000)
                 if abs(self.particleList[i].x - self.particleList[j].x) < self.infectionRadius and \
                         abs(self.particleList[i].y - self.particleList[j].y) < self.infectionRadius:
                     if randomRisk < self.riskOfInfection:
@@ -174,7 +171,7 @@ class Simulation:
 
         for i in range(self.amountOfParticles):
             randomDeath = random.randint(0, 1000)
-            randomQuarantine = random.randint(0, 100)
+            randomQuarantine = random.randint(0, 1000)
             # disease process for an infected particle, if it survives it will be immune for a certain time
             # has also a certain chance to be quarantined, where it cannot infect anyone
 
@@ -194,7 +191,7 @@ class Simulation:
             # -> No need for another for-loop
             self.countGroups(i)
 
-    # reduce infected days and, by chance, quarantine infected particle
+    # necessary interactions with infected particles
     def updateInfected(self, i, randomDeath, randomQuarantine):
 
         self.particleList[i].daysInfected = self.particleList[i].daysInfected - 1
@@ -217,7 +214,7 @@ class Simulation:
             # + 1 because it will immediately be decremented in the same method once
             self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
 
-    # reduce quarantine-days
+    # necessary interactions with quarantined particles
     def updateQuarantined(self, i, randomDeath):
         self.particleList[i].daysQuarantined = self.particleList[i].daysQuarantined - 1
 
@@ -232,7 +229,7 @@ class Simulation:
             self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
             self.setDirection(i)  # if the particle was quarantined it needs a new direction
 
-    # reduce immune-days
+    # necessary interactions with immune particles
     def updateImmune(self, i):
         self.particleList[i].daysImmune = self.particleList[i].daysImmune - 1
         if self.particleList[i].daysImmune == 0 and self.particleList[i].status == "IMMUNE":
