@@ -1,6 +1,6 @@
 import csv
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
@@ -20,7 +20,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     infectionRadiusSignal = QtCore.pyqtSignal(int)
     riskOfInfectionSignal = QtCore.pyqtSignal(int)
     rateOfDeathSignal = QtCore.pyqtSignal(int)
-    riskOfQuarantine = QtCore.pyqtSignal(int)
+    riskOfQuarantineSignal = QtCore.pyqtSignal(int)
     avgInfectionTimeSignal = QtCore.pyqtSignal(int)
     avgImmuneTimeSignal = QtCore.pyqtSignal(int)
 
@@ -48,6 +48,31 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # ToDo: "Wollen sie die Parameter zurücksetzen?" bei Reset -> Nach Milestone
         self.granularity = self.granularitySpinBox.value()
+
+        # set the color of the LCDs
+        self.palette = self.daysPassedLCD.palette()
+        # foreground color
+        self.palette.setColor(self.palette.WindowText, QtGui.QColor(0, 0, 0))
+        # background color
+        self.palette.setColor(self.palette.Background, QtGui.QColor(0, 0, 0))
+        # "light" border
+        self.palette.setColor(self.palette.Light, QtGui.QColor(0, 0, 0))
+        # "dark" border
+        self.palette.setColor(self.palette.Dark, QtGui.QColor(0, 0, 0))
+        # set the palette
+        self.daysPassedLCD.setPalette(self.palette)
+
+        self.palette2 = self.percentageInfectedLCD.palette()
+        # foreground color
+        self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(0, 0, 0))
+        # background color
+        self.palette2.setColor(self.palette2.Background, QtGui.QColor(0, 0, 0))
+        # "light" border
+        self.palette2.setColor(self.palette2.Light, QtGui.QColor(0, 0, 0))
+        # "dark" border
+        self.palette2.setColor(self.palette2.Dark, QtGui.QColor(0, 0, 0))
+        # set the palette
+        self.percentageInfectedLCD.setPalette(self.palette2)
 
     def connectSignals(self):
         # buttons
@@ -100,8 +125,26 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resumeSimButton.hide()
         self.exportCsvButton.hide()
         self.startSimButton.show()
-        self.granularitySpinBox.setValue(1)
         # ToDo: Inputs wieder auf Default-Werte zurücksetzten
+        self.resetValues()
+
+    def resetValues(self):
+        self.granularitySpinBox.setValue(1)
+        self.daysPassedLCD.display(0)
+        self.percentageInfectedLCD.display(0)
+
+        self.palette.setColor(self.palette.WindowText, QtGui.QColor(0, 0, 0))
+        self.palette.setColor(self.palette.Background, QtGui.QColor(0, 0, 0))
+        self.palette.setColor(self.palette.Light, QtGui.QColor(0, 0, 0))
+        self.palette.setColor(self.palette.Dark, QtGui.QColor(0, 0, 0))
+        self.daysPassedLCD.setPalette(self.palette)
+
+        self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(0, 0, 0))
+        self.palette2.setColor(self.palette2.Background, QtGui.QColor(0, 0, 0))
+        self.palette2.setColor(self.palette2.Light, QtGui.QColor(0, 0, 0))
+        self.palette2.setColor(self.palette2.Dark, QtGui.QColor(0, 0, 0))
+        self.percentageInfectedLCD.setPalette(self.palette2)
+
 
     def granularityChanged(self):
         self.granularity = self.granularitySpinBox.value()
@@ -110,19 +153,19 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.riskOfInfectionSignal.emit(self.riskOfInfSpinBox.value()*10)  # "*10" to get a whole number
 
     def rateOfDeathChanged(self):
-        print("rate")
+        self.rateOfDeathSignal.emit(self.rateOfDeathSpinBox.value()*10)
 
     def percentageOfQuarantineChanged(self):
-        print("pOQ")
+        self.riskOfQuarantineSignal.emit(self.percentageQuarantineSpinBox.value()*10)
 
     def avgInfectedTimeChanged(self):
-        print("avgInf")
+        self.avgInfectionTimeSignal.emit(self.avgInfectionTimeSpinBox.value())
 
     def avgImmuneTimeChanged(self):
-        print("avgImm")
+        self.avgImmuneTimeSignal.emit(self.avgImmuneTimeSpinBox.value())
 
     def infectionRadiusChanged(self):
-        print("inf")
+        self.infectionRadiusSignal.emit(self.infectionRadiusSpinBox_2.value())
 
     def exportCsvClicked(self):
         self.pauseSimulationClicked()
@@ -178,5 +221,17 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         x = msg.exec()
 
     def updateLCD(self, days, quantityList):
-        self.daysPassedLCD.display(days)
-        self.percentageInfectedLCD.display(quantityList[days][2]/self.entitiesSpinBox.value())
+        percentageOfTotal = quantityList[days][2] / self.entitiesSpinBox.value()  # percentage between 0 and 1
+        self.daysPassedLCD.display(days + 1)
+        self.percentageInfectedLCD.display(100*percentageOfTotal)  # percentage as non-fractional number
+
+        # with increasing percentage, the "green"-value decreases while the "red"-value increases
+        self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
+        # background color
+        self.palette2.setColor(self.palette2.Background, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
+        # "light" border
+        self.palette2.setColor(self.palette2.Light, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
+        # "dark" border
+        self.palette2.setColor(self.palette2.Dark, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
+        # set the new palette again
+        self.percentageInfectedLCD.setPalette(self.palette2)

@@ -34,8 +34,29 @@ class Simulation:
         self.createParticle()
 
     # changes the risk of infection
-    def changeRiskOfInfection(self, rOI):
+    def changeRiskOfInfectionS(self, rOI):
         self.riskOfInfection = rOI
+
+    # changes the rate of death
+    def changeRateOfDeathS(self, rOD):
+        print("simulation")
+        self.rateOfDeath = rOD
+
+    # changes the risk of quarantine
+    def changeRiskOfQuarantineS(self, rOQ):
+        self.riskOfQuarantine = rOQ
+
+    # changes the average infected time
+    def changeAvgInfectedTimeS(self, avgInfTime):
+        self.avgInfectedTime = avgInfTime
+
+    # changes the average immune time
+    def changeAvgImmuneTimeS(self, avgImmuneTime):
+        self.avgImmuneDays = avgImmuneTime
+
+    # changes the infection radius
+    def changeInfectionRadiusS(self, radius):
+        self.infectionRadius = radius
 
     # perform a step
     def performStep(self):

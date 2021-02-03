@@ -74,11 +74,43 @@ class Presenter(QtCore.QObject):
                 self.writer.writerow(quantityList[i])
         self.f.close()
 
-    # if a simulation has been created, change the risk of infection in the simulation
-    def changeRisk(self, risk):
-        if self.simulation:
-            self.simulation.changeRiskOfInfection(risk)
+# set of methods that connect with the parameters in the simulation class if a value is changed
+# if simulation has been created,...
 
+    # ...change the risk of infection in the simulation
+    def changeRiskOfI(self, risk):
+        if self.simulation:
+            self.simulation.changeRiskOfInfectionS(risk)
+
+    # ...change rate of death
+    def changeRate(self, rate):
+        print("changerate")
+        if self.simulation:
+            print("changerate inside")
+            self.simulation.changeRateOfDeathS(rate)
+
+    # ...change risk of being quarantined
+    def changeRiskOfQ(self, risk):
+        if self.simulation:
+            self.simulation.changeRiskOfQuarantineS(risk)
+
+    # ...change average infected time
+    def changeAvgInfectedTime(self, time):
+        if self.simulation:
+            print(time)
+            self.simulation.changeAvgInfectedTimeS(avgInfTime=time)
+
+    # ...change average immune time
+    def changeAvgImmuneTime(self, time):
+        if self.simulation:
+            self.simulation.changeAvgImmuneTimeS(time)
+
+    # ...change infection radius
+    def changeInfectionRadius(self, radius):
+        if self.simulation:
+            self.simulation.changeInfectionRadiusS(radius)
+
+    # connect elements of the view
     def _connectUIElements(self) -> None:
         # elements of the main window
         self.ui.startSimulationSignal.connect(self.startSimulation)
@@ -86,7 +118,11 @@ class Presenter(QtCore.QObject):
         self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
         self.ui.exportCsvSignal.connect(self.exportCsv)
-        self.ui.riskOfInfectionSignal.connect(self.changeRisk)
-
+        self.ui.riskOfInfectionSignal.connect(self.changeRiskOfI)
+        self.ui.rateOfDeathSignal.connect(self.changeRate)
+        self.ui.riskOfQuarantineSignal.connect(self.changeRiskOfQ)
+        self.ui.avgInfectionTimeSignal.connect(self.changeAvgInfectedTime)
+        self.ui.avgImmuneTimeSignal.connect(self.changeAvgImmuneTime)
+        self.ui.infectionRadiusSignal.connect(self.changeInfectionRadius)
 
 
