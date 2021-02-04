@@ -11,7 +11,7 @@ from view.mainwindow import Ui_MainWindow
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, bool, bool, bool)
     pauseSimulationSignal = QtCore.pyqtSignal()
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
@@ -23,7 +23,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     riskOfQuarantineSignal = QtCore.pyqtSignal(int)
     avgInfectionTimeSignal = QtCore.pyqtSignal(int)
     avgImmuneTimeSignal = QtCore.pyqtSignal(int)
-
 
     def __init__(self):
         super(View, self).__init__()
@@ -82,6 +81,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetSimButton.pressed.connect(self.resetSimulationClicked)
         self.exportCsvButton.pressed.connect(self.exportCsvClicked)
 
+        # check-boxes
+        self.deflectEachOtherCheckBox.clicked.connect(self.deflectCheckBoxClicked)
+        self.closureOfSchoolsCheckBox.clicked.connect(self.closureCheckBoxClicked)
+
         # parameters
         self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
         self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
@@ -99,7 +102,12 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                             self.riskOfInfSpinBox.value()*10, self.rateOfDeathSpinBox.value()*10,
                                             self.percentageQuarantineSpinBox.value()*10,
                                             self.avgInfectionTimeSpinBox.value(),
-                                            self.avgImmuneTimeSpinBox.value(), self.infectionRadiusSpinBox_2.value())
+                                            self.avgImmuneTimeSpinBox.value(), self.infectionRadiusSpinBox_2.value(),
+                                            self.deflectEachOtherCheckBox.isChecked(), self.closureOfSchoolsCheckBox.isChecked(),
+                                            self.healthCareOverloadedCheckBox.isChecked())
+            self.closureOfSchoolsCheckBox.setDisabled(True)
+            self.healthCareOverloadedCheckBox.setDisabled(True)
+            self.deflectEachOtherCheckBox.setDisabled(True)
             self.startSimButton.hide()
             self.pauseSimButton.show()
             self.resetSimButton.show()
@@ -129,23 +137,42 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetValues()
 
     def resetValues(self):
+        # reset parameters
         self.granularitySpinBox.setValue(1)
         self.daysPassedLCD.display(0)
         self.percentageInfectedLCD.display(0)
 
+        # reset days-lcd to black
         self.palette.setColor(self.palette.WindowText, QtGui.QColor(0, 0, 0))
         self.palette.setColor(self.palette.Background, QtGui.QColor(0, 0, 0))
         self.palette.setColor(self.palette.Light, QtGui.QColor(0, 0, 0))
         self.palette.setColor(self.palette.Dark, QtGui.QColor(0, 0, 0))
         self.daysPassedLCD.setPalette(self.palette)
 
+        # reset percentage-lcd to black
         self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(0, 0, 0))
         self.palette2.setColor(self.palette2.Background, QtGui.QColor(0, 0, 0))
         self.palette2.setColor(self.palette2.Light, QtGui.QColor(0, 0, 0))
         self.palette2.setColor(self.palette2.Dark, QtGui.QColor(0, 0, 0))
         self.percentageInfectedLCD.setPalette(self.palette2)
 
+        # enable the check boxes
+        self.closureOfSchoolsCheckBox.setDisabled(False)
+        self.healthCareOverloadedCheckBox.setDisabled(False)
+        self.deflectEachOtherCheckBox.setDisabled(False)
 
+# checkbox checked methods
+    def deflectCheckBoxClicked(self):
+        # implicit change as only one of the two can be selected
+        if self.closureOfSchoolsCheckBox.isChecked():
+            self.closureOfSchoolsCheckBox.setChecked(False)
+
+    def closureCheckBoxClicked(self):
+        # implicit change as only one of the two can be selected
+        if self.deflectEachOtherCheckBox.isChecked():
+            self.deflectEachOtherCheckBox.setChecked(False)
+
+# parameter change methods
     def granularityChanged(self):
         self.granularity = self.granularitySpinBox.value()
 

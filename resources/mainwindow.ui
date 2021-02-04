@@ -96,6 +96,9 @@
                 <strikeout>false</strikeout>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic; text-decoration: underline;&quot;&gt;Only one of the following can be selected!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Select modifier:</string>
               </property>
@@ -104,23 +107,23 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="deflectEachOtherCheckBox">
                 <property name="text">
-                 <string>Modifier 1</string>
+                 <string>Particles deflect each other</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox_2">
+               <widget class="QCheckBox" name="closureOfSchoolsCheckBox">
                 <property name="text">
-                 <string>Modifier 2</string>
+                 <string>Closure of schools</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox_3">
+               <widget class="QCheckBox" name="healthCareOverloadedCheckBox">
                 <property name="text">
-                 <string>Modifier 3</string>
+                 <string>Health care system overloaded</string>
                 </property>
                </widget>
               </item>
@@ -142,7 +145,7 @@
                <bool>true</bool>
               </property>
               <property name="toolTip">
-               <string>If granularity = 1, every day gets exported, if granularity = 2, every second day gets exported,...</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Only exports days that are multiples of the selected value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select granularity:</string>
@@ -175,6 +178,9 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Risk of infection for a healthy particle for each frame it is in the infection area of an infected particle&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Select risk of infection in percent: </string>
               </property>
@@ -204,6 +210,9 @@
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;% of dying for an infected particle each day&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select rate of death in percent:</string>
@@ -235,6 +244,9 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;% of being quarantined for an infected particle each day&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Select percentage of being quarantined:</string>
               </property>
@@ -265,8 +277,11 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Randomly selects a time within a deviation of 25% of the selected value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Select average infectied-time:</string>
+               <string>Select average infectied-time in days:</string>
               </property>
              </widget>
             </item>
@@ -295,8 +310,11 @@
                 <bold>true</bold>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Randomly selects a time within a deviation of 25% of the selected value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Select average immune-time:</string>
+               <string>Select average immune-time in days:</string>
               </property>
              </widget>
             </item>
@@ -324,6 +342,9 @@
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Comparison: Size of a particle is &amp;quot;8&amp;quot;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select infection radius:</string>
@@ -477,7 +498,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Speed of simulation:</string>
+           <string>Simulation speed:</string>
           </property>
          </widget>
         </item>
@@ -490,6 +511,19 @@
            <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <spacer name="horizontalSpacer">

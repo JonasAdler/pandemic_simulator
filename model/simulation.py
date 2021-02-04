@@ -4,7 +4,7 @@ import csv
 from model.healthconditions import healthconditions
 
 class Simulation:
-    def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius):
+    def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealthcare):
         print("Simulation Created")
 
         self.stepCounter = 0
@@ -20,7 +20,11 @@ class Simulation:
         self.avgInfectedTime = avgInfectedTime
         self.avgImmuneDays = avgImmuneTime
         self.infectionRadius = infectionRadius
+
+        self.rateOfDeathTemp = rateOfDeath
+
         self.dayLength = 120
+        self.healthCareCapacity = 65  # capacity of 65 percent of all particles
 
         self.countHealthy = amountOfParticles - initiallyInfected
         self.countInf = initiallyInfected
@@ -29,6 +33,10 @@ class Simulation:
         self.quantityList = [[0, self.countHealthy, self.countInf, self.countImmune, self.countDeceased]]
 
         self.particleList = {}
+
+        self.modifierDeflectEnabled = modifierDeflect
+        self.modifierSchoolsEnabled = modifierSchool
+        self.modifierHealthCareEnabled = modifierHealthcare
 
         # create the selected amount of particles
         self.createParticle()
@@ -39,7 +47,6 @@ class Simulation:
 
     # changes the rate of death
     def changeRateOfDeathS(self, rOD):
-        print("simulation")
         self.rateOfDeath = rOD
 
     # changes the risk of quarantine
@@ -58,6 +65,9 @@ class Simulation:
     def changeInfectionRadiusS(self, radius):
         self.infectionRadius = radius
 
+    def increaseDeathRate(self):
+        self.rateOfDeath = self.rateOfDeathTemp * 3  # rate of death increases by 300%
+
     # perform a step
     def performStep(self):
 
@@ -71,6 +81,15 @@ class Simulation:
         # we also want to change the state of the particles after contact with infected ones
 
         self.infectParticle()
+
+        # deflect the particles if it is enabled
+        if self.modifierDeflectEnabled:
+            self.changeDirectionAfterCollision()
+
+        if self.modifierHealthCareEnabled:
+            # if more then 65 percent of the population is infected -> Health capacity exceeded -> Increase death rate
+            if self.countInf / self.amountOfParticles > self.healthCareCapacity:
+                self.increaseDeathRate()
 
         # one day equals 120 steps or 2 seconds,
         # we will also change attributes (e.g. daysInfected) for each particle each day -> changeStatus()
@@ -167,20 +186,39 @@ class Simulation:
 
     # will change the state of a particle after colliding with another
     def infectParticle(self):
+        # iterate over the particles (only to the second last, see for loop in "MyPartcle.collidesWith()")
         for i in range(self.amountOfParticles - 1):
-            for j in range(i + 1, self.amountOfParticles):
-                randomRisk = random.randint(0, 1000)
-                if abs(self.particleList[i].x - self.particleList[j].x) < self.infectionRadius and \
-                        abs(self.particleList[i].y - self.particleList[j].y) < self.infectionRadius:
+            randomRisk = random.randint(0, 1000)
+
+            # check for collisions
+            self.particleList[i].collidesWith(self.particleList, i, self.infectionRadius)
+
+            # if a collision has been detected for the particle
+            if len(self.particleList[i].collisions) > 0:
+                for j in self.particleList[i].collisions:
                     if randomRisk < self.riskOfInfection:
                         # either "i" is infected infects "j"...
                         if (self.particleList[i].status == "INFECTED") and (self.particleList[j].status == "HEALTHY"):
                             self.particleList[j].status = "INFECTED"
-                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
+                            # deviation of 25% of the selected average -> Infection time different for each particle
+                            self.particleList[j].daysInfected = random.randint(self.avgInfectedTime - int(self.avgInfectedTime*0.25),
+                                                                               self.avgInfectedTime + int(self.avgInfectedTime*0.25))
                         # ...or "i" is healthy and gets infected by "j"
                         if (self.particleList[i].status == "HEALTHY") and (self.particleList[j].status == "INFECTED"):
                             self.particleList[i].status = "INFECTED"
-                            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)  #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
+                            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - int(self.avgInfectedTime*0.25),
+                                                                               self.avgInfectedTime + int(self.avgInfectedTime*0.25))
+
+    # change directions if particles collide
+    def changeDirectionAfterCollision(self):
+        for i in range(self.amountOfParticles - 1):
+            if len(self.particleList[i].collisions) > 0:
+                if (self.particleList[i].status != "DECEASED" and
+                        self.particleList[i].status != "QUARANTINED"):
+                    for j in self.particleList[i].collisions:
+                        if (self.particleList[j].status != "DECEASED" and
+                                self.particleList[j].status != "QUARANTINED"):
+                            self.setDirection(i)
 
     # changes the behaviour of each particle for the different conditions
     def changeStatus(self):
@@ -220,6 +258,7 @@ class Simulation:
         # if a particle is still infected and the probability occurs -> kill the particle
         if randomDeath < self.rateOfDeath and self.particleList[i].daysInfected > 0:
             self.particleList[i].status = "DECEASED"
+            self.particleList[i].daysInfected = 0
             self.particleList[i].direction = None
 
         # if a particle is still infected and the probability occurs -> quarantine the particle
@@ -233,7 +272,8 @@ class Simulation:
         if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
             self.particleList[i].status = "IMMUNE"
             # + 1 because it will immediately be decremented in the same method once
-            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - int(self.avgImmuneDays*0.25),
+                                                             self.avgImmuneDays + int(self.avgImmuneDays*0.25)) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
 
     # necessary interactions with quarantined particles
     def updateQuarantined(self, i, randomDeath):
@@ -247,7 +287,7 @@ class Simulation:
         # release one from quarantine after time is over
         if self.particleList[i].daysQuarantined == 0 and self.particleList[i].status == "QUARANTINED":
             self.particleList[i].status = "IMMUNE"
-            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - 2, self.avgImmuneDays + 2) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - int(self.avgImmuneDays*0.25), self.avgImmuneDays + int(self.avgImmuneDays*0.25)) + 1 #ToDo: time - 2 may be smaller than 0, which may lead to infinite time being infected
             self.setDirection(i)  # if the particle was quarantined it needs a new direction
 
     # necessary interactions with immune particles

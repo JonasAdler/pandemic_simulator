@@ -33,10 +33,10 @@ class Presenter(QtCore.QObject):
             #self.ui.updateData(self.simulation.getData())
 
     # create the simulation and hand it all the predetermined values
-    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius):
+    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
-        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius)
+        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth)
         self.ui.startSimulation()
 
     # pause the simulation
@@ -124,5 +124,3 @@ class Presenter(QtCore.QObject):
         self.ui.avgInfectionTimeSignal.connect(self.changeAvgInfectedTime)
         self.ui.avgImmuneTimeSignal.connect(self.changeAvgImmuneTime)
         self.ui.infectionRadiusSignal.connect(self.changeInfectionRadius)
-
-
