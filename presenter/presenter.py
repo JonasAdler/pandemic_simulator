@@ -4,11 +4,12 @@ from view.view import View
 from model.simulation import Simulation
 
 import csv
-FPS = 60
+
 
 class Presenter(QtCore.QObject):
     def __init__(self):
         super(Presenter, self).__init__()
+        self.FPS = 60
         # create main window
 
         self.ui = View()
@@ -18,7 +19,7 @@ class Presenter(QtCore.QObject):
         # create timer that will call the mainLoop every 1000/FPS milliseconds
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.mainLoop)
-        self.timer.start(int(1000 / FPS))
+        self.timer.start(int(1000 / self.FPS))
         self.framecounter = 0
 
         self._connectUIElements()
@@ -110,6 +111,9 @@ class Presenter(QtCore.QObject):
         if self.simulation:
             self.simulation.changeInfectionRadiusS(radius)
 
+    def changeSpeedOfSim(self, newSpeed):
+        self.timer.start(int(1000/newSpeed))
+
     # connect elements of the view
     def _connectUIElements(self) -> None:
         # elements of the main window
@@ -124,3 +128,4 @@ class Presenter(QtCore.QObject):
         self.ui.avgInfectionTimeSignal.connect(self.changeAvgInfectedTime)
         self.ui.avgImmuneTimeSignal.connect(self.changeAvgImmuneTime)
         self.ui.infectionRadiusSignal.connect(self.changeInfectionRadius)
+        self.ui.speedOfSimSignal.connect(self.changeSpeedOfSim)

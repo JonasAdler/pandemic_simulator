@@ -23,7 +23,7 @@ class Simulation:
 
         self.rateOfDeathTemp = rateOfDeath
 
-        self.dayLength = 120
+        self.dayLength = 60
         self.healthCareCapacity = 65  # capacity of 65 percent of all particles
 
         self.countHealthy = amountOfParticles - initiallyInfected

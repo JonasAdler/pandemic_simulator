@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1142</width>
-    <height>751</height>
+    <width>1100</width>
+    <height>774</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Pandemic</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -97,7 +97,7 @@
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic; text-decoration: underline;&quot;&gt;Only one of the following can be selected!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic; text-decoration: underline;&quot;&gt;Either &amp;quot;closure of schools &amp;quot;or &amp;quot;particles deflect each other&amp;quot;!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select modifier:</string>
@@ -123,7 +123,7 @@
               <item>
                <widget class="QCheckBox" name="healthCareOverloadedCheckBox">
                 <property name="text">
-                 <string>Health care system overloaded</string>
+                 <string>Health care system can fail</string>
                 </property>
                </widget>
               </item>
@@ -287,6 +287,9 @@
             </item>
             <item>
              <widget class="QSpinBox" name="avgInfectionTimeSpinBox">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::UpDownArrows</enum>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -504,6 +507,15 @@
         </item>
         <item>
          <widget class="QSlider" name="speedOfSimSlider">
+          <property name="minimum">
+           <number>30</number>
+          </property>
+          <property name="maximum">
+           <number>240</number>
+          </property>
+          <property name="value">
+           <number>60</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -513,17 +525,39 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="label_15">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
+          <property name="text">
+           <string>Multiplier:</string>
           </property>
-         </spacer>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLCDNumber" name="multiplyLCD">
+          <property name="inputMethodHints">
+           <set>Qt::ImhNone</set>
+          </property>
+          <property name="smallDecimalPoint">
+           <bool>true</bool>
+          </property>
+          <property name="digitCount">
+           <number>2</number>
+          </property>
+          <property name="segmentStyle">
+           <enum>QLCDNumber::Filled</enum>
+          </property>
+          <property name="value" stdset="0">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="intValue" stdset="0">
+           <number>1</number>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
@@ -591,7 +625,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1142</width>
+     <width>1100</width>
      <height>21</height>
     </rect>
    </property>

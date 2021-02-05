@@ -15,6 +15,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     pauseSimulationSignal = QtCore.pyqtSignal()
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
+    speedOfSimSignal = QtCore.pyqtSignal(int)
     exportCsvSignal = QtCore.pyqtSignal()
 
     infectionRadiusSignal = QtCore.pyqtSignal(int)
@@ -73,6 +74,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # set the palette
         self.percentageInfectedLCD.setPalette(self.palette2)
 
+        self.multiplyLCD.setPalette(self.palette)
+
     def connectSignals(self):
         # buttons
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -93,6 +96,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.avgImmuneTimeSpinBox.valueChanged.connect(self.avgImmuneTimeChanged)
         self.avgInfectionTimeSpinBox.valueChanged.connect(self.avgInfectedTimeChanged)
         self.infectionRadiusSpinBox_2.valueChanged.connect(self.infectionRadiusChanged)
+
+        self.speedOfSimSlider.valueChanged.connect(self.speedOfSimChanged)
 
     # accumulation of events that happen, if buttons are pressed
 
@@ -156,6 +161,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.palette2.setColor(self.palette2.Dark, QtGui.QColor(0, 0, 0))
         self.percentageInfectedLCD.setPalette(self.palette2)
 
+        # reset multiply lcd to black
+        self.multiplyLCD.setPalette(self.palette)
+
         # enable the check boxes
         self.closureOfSchoolsCheckBox.setDisabled(False)
         self.healthCareOverloadedCheckBox.setDisabled(False)
@@ -193,6 +201,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def infectionRadiusChanged(self):
         self.infectionRadiusSignal.emit(self.infectionRadiusSpinBox_2.value())
+
+    def speedOfSimChanged(self):
+        self.speedOfSimSignal.emit(self.speedOfSimSlider.value())
+        self.updateMultiplier()
 
     def exportCsvClicked(self):
         self.pauseSimulationClicked()
@@ -249,8 +261,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def updateLCD(self, days, quantityList):
         percentageOfTotal = quantityList[days][2] / self.entitiesSpinBox.value()  # percentage between 0 and 1
+        percentage_string = "{:.1%}".format(percentageOfTotal)
         self.daysPassedLCD.display(days + 1)
-        self.percentageInfectedLCD.display(100*percentageOfTotal)  # percentage as non-fractional number
+        self.percentageInfectedLCD.display(percentage_string)  # percentage as non-fractional number
 
         # with increasing percentage, the "green"-value decreases while the "red"-value increases
         self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
@@ -262,3 +275,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.palette2.setColor(self.palette2.Dark, QtGui.QColor(150*percentageOfTotal, 150 - 150*percentageOfTotal, 0))
         # set the new palette again
         self.percentageInfectedLCD.setPalette(self.palette2)
+
+    def updateMultiplier(self):
+        # Format the multiply
+        multi_lcd = '{0:0.1f}'.format(self.speedOfSimSlider.value()/60)
+        self.multiplyLCD.setPalette(self.palette)
+        self.multiplyLCD.display(multi_lcd)
