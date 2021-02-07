@@ -115,6 +115,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="closureOfSchoolsCheckBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="text">
                  <string>Closure of schools</string>
                 </property>
@@ -131,13 +134,23 @@
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <item>
                  <widget class="QLabel" name="label_16">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How many days it takes until the vaccine is ready to use!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="text">
                    <string>Development in days:</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="vaccineDaysSpinBox"/>
+                 <widget class="QSpinBox" name="vaccineDaysSpinBox">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>365</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -503,7 +516,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QLCDNumber" name="percentageInfectedLCD"/>
+             <widget class="QLCDNumber" name="percentageInfectedLCD">
+              <property name="digitCount">
+               <number>6</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -601,6 +618,9 @@
          <widget class="QPushButton" name="startSimButton">
           <property name="text">
            <string>Start</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>

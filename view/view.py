@@ -124,7 +124,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                             self.vaccineDaysSpinBox.value())
             # disable the modifiers
             self.vaccineCheckBox.setDisabled(True)
-            self.closureOfSchoolsCheckBox.setDisabled(True)
+            #self.closureOfSchoolsCheckBox.setDisabled(True)
             self.healthCareOverloadedCheckBox.setDisabled(True)
             self.deflectEachOtherCheckBox.setDisabled(True)
             self.label_16.setDisabled(True)
@@ -184,7 +184,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # enable the modifiers
         self.vaccineCheckBox.setDisabled(False)
-        self.closureOfSchoolsCheckBox.setDisabled(False)
+        #self.closureOfSchoolsCheckBox.setDisabled(False)
         self.healthCareOverloadedCheckBox.setDisabled(False)
         self.deflectEachOtherCheckBox.setDisabled(False)
         self.label_16.setDisabled(False)
