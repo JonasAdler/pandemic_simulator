@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
 # Form implementation generated from reading ui file 'PandemieSimulator_AdlerJonas_skaliert.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
@@ -73,6 +74,18 @@ class Ui_MainWindow(object):
         self.closureOfSchoolsCheckBox = QtWidgets.QCheckBox(self.centralwidget)
         self.closureOfSchoolsCheckBox.setObjectName("closureOfSchoolsCheckBox")
         self.verticalLayout_5.addWidget(self.closureOfSchoolsCheckBox)
+        self.vaccineCheckBox = QtWidgets.QCheckBox(self.centralwidget)
+        self.vaccineCheckBox.setObjectName("vaccineCheckBox")
+        self.verticalLayout_5.addWidget(self.vaccineCheckBox)
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.label_16 = QtWidgets.QLabel(self.centralwidget)
+        self.label_16.setObjectName("label_16")
+        self.horizontalLayout_9.addWidget(self.label_16)
+        self.vaccineDaysSpinBox = QtWidgets.QSpinBox(self.centralwidget)
+        self.vaccineDaysSpinBox.setObjectName("vaccineDaysSpinBox")
+        self.horizontalLayout_9.addWidget(self.vaccineDaysSpinBox)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_9)
         self.healthCareOverloadedCheckBox = QtWidgets.QCheckBox(self.centralwidget)
         self.healthCareOverloadedCheckBox.setObjectName("healthCareOverloadedCheckBox")
         self.verticalLayout_5.addWidget(self.healthCareOverloadedCheckBox)
@@ -340,6 +353,8 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Select modifier:"))
         self.deflectEachOtherCheckBox.setText(_translate("MainWindow", "Particles deflect each other"))
         self.closureOfSchoolsCheckBox.setText(_translate("MainWindow", "Closure of schools"))
+        self.vaccineCheckBox.setText(_translate("MainWindow", "Develop a vaccine"))
+        self.label_16.setText(_translate("MainWindow", "Development in days:"))
         self.healthCareOverloadedCheckBox.setText(_translate("MainWindow", "Health care system can fail"))
         self.label_11.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Only exports days that are multiples of the selected value</span></p></body></html>"))
         self.label_11.setText(_translate("MainWindow", "Select granularity:"))

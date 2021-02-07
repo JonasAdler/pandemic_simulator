@@ -31,13 +31,14 @@ class Presenter(QtCore.QObject):
             self.ui.drawItems(self.simulation.getParticleList())
             self.ui.updateScene()
             self.ui.updateLCD(self.simulation.getData(), self.simulation.getQuantityList())
+            self.ui.plotGraph(self.simulation.getQuantityList())
             #self.ui.updateData(self.simulation.getData())
 
     # create the simulation and hand it all the predetermined values
-    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth):
+    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth, modifierVaccine, vaccineDays):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
-        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth)
+        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth, modifierVaccine, vaccineDays)
         self.ui.startSimulation()
 
     # pause the simulation

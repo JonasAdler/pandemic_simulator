@@ -13,6 +13,7 @@ class MyParticle:
         self.daysQuarantined = 0
         # stores the position of the particles in the list that collide with this particle object
         self.collisions = []
+        self.isVaccinated = False
 
     def collidesWith(self, particleList, i, infectionRadius):
         # reset the colliding particles for each function call

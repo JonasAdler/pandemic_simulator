@@ -1,5 +1,6 @@
 import csv
-
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QBrush, QPen
 from PyQt5.QtCore import Qt
@@ -11,11 +12,10 @@ from view.mainwindow import Ui_MainWindow
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, bool, bool, bool)
+    startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int, bool, bool, bool, bool, int)
     pauseSimulationSignal = QtCore.pyqtSignal()
     resumeSimulationSignal = QtCore.pyqtSignal()
     resetSimulationSignal = QtCore.pyqtSignal()
-    speedOfSimSignal = QtCore.pyqtSignal(int)
     exportCsvSignal = QtCore.pyqtSignal()
 
     infectionRadiusSignal = QtCore.pyqtSignal(int)
@@ -24,6 +24,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     riskOfQuarantineSignal = QtCore.pyqtSignal(int)
     avgInfectionTimeSignal = QtCore.pyqtSignal(int)
     avgImmuneTimeSignal = QtCore.pyqtSignal(int)
+    speedOfSimSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(View, self).__init__()
@@ -34,6 +35,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resumeSimButton.hide()
         self.pauseSimButton.hide()
         self.exportCsvButton.hide()
+        self.label_16.hide()  # label for "Development in days"
+        self.vaccineDaysSpinBox.hide()
 
         self.connectSignals()
 
@@ -76,6 +79,12 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.multiplyLCD.setPalette(self.palette)
 
+        #self.graphicsView_3 = pg.PlotWidget(self.centralwidget)
+        #self.graphicsView_3.setBackground("w")
+        #self.graphicsView_3 = pg.PlotWidget(self.centralwidget)
+        #self.graphicsView_3.setBackground("w")
+        #self.verticalLayout_12.addWidget(self.graphicsView_3)
+
     def connectSignals(self):
         # buttons
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -87,6 +96,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # check-boxes
         self.deflectEachOtherCheckBox.clicked.connect(self.deflectCheckBoxClicked)
         self.closureOfSchoolsCheckBox.clicked.connect(self.closureCheckBoxClicked)
+        self.vaccineCheckBox.clicked.connect(self.vaccineCheckBoxClicked)
 
         # parameters
         self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
@@ -102,6 +112,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
+        # if no error, pass all the start values to the presenter
         if self.entitiesSpinBox.value() >= self.initiallyInfectedSpinBox.value():
             self.startSimulationSignal.emit(self.entitiesSpinBox.value(), self.initiallyInfectedSpinBox.value(),
                                             self.riskOfInfSpinBox.value()*10, self.rateOfDeathSpinBox.value()*10,
@@ -109,10 +120,17 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                             self.avgInfectionTimeSpinBox.value(),
                                             self.avgImmuneTimeSpinBox.value(), self.infectionRadiusSpinBox_2.value(),
                                             self.deflectEachOtherCheckBox.isChecked(), self.closureOfSchoolsCheckBox.isChecked(),
-                                            self.healthCareOverloadedCheckBox.isChecked())
+                                            self.healthCareOverloadedCheckBox.isChecked(), self.vaccineCheckBox.isChecked(),
+                                            self.vaccineDaysSpinBox.value())
+            # disable the modifiers
+            self.vaccineCheckBox.setDisabled(True)
             self.closureOfSchoolsCheckBox.setDisabled(True)
             self.healthCareOverloadedCheckBox.setDisabled(True)
             self.deflectEachOtherCheckBox.setDisabled(True)
+            self.label_16.setDisabled(True)
+            self.vaccineDaysSpinBox.setDisabled(True)
+
+            # show/hide the buttons
             self.startSimButton.hide()
             self.pauseSimButton.show()
             self.resetSimButton.show()
@@ -164,10 +182,13 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # reset multiply lcd to black
         self.multiplyLCD.setPalette(self.palette)
 
-        # enable the check boxes
+        # enable the modifiers
+        self.vaccineCheckBox.setDisabled(False)
         self.closureOfSchoolsCheckBox.setDisabled(False)
         self.healthCareOverloadedCheckBox.setDisabled(False)
         self.deflectEachOtherCheckBox.setDisabled(False)
+        self.label_16.setDisabled(False)
+        self.vaccineDaysSpinBox.setDisabled(False)
 
 # checkbox checked methods
     def deflectCheckBoxClicked(self):
@@ -179,6 +200,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # implicit change as only one of the two can be selected
         if self.deflectEachOtherCheckBox.isChecked():
             self.deflectEachOtherCheckBox.setChecked(False)
+
+    def vaccineCheckBoxClicked(self):
+        if self.vaccineCheckBox.isChecked():
+            self.label_16.show()
+            self.vaccineDaysSpinBox.show()
+        else:
+            self.label_16.hide()
+            self.vaccineDaysSpinBox.hide()
 
 # parameter change methods
     def granularityChanged(self):
@@ -281,3 +310,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         multi_lcd = '{0:0.1f}'.format(self.speedOfSimSlider.value()/60)
         self.multiplyLCD.setPalette(self.palette)
         self.multiplyLCD.display(multi_lcd)
+
+    def plotGraph(self, quantityList):
+        pass

@@ -121,6 +121,27 @@
                </widget>
               </item>
               <item>
+               <widget class="QCheckBox" name="vaccineCheckBox">
+                <property name="text">
+                 <string>Develop a vaccine</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>Development in days:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="vaccineDaysSpinBox"/>
+                </item>
+               </layout>
+              </item>
+              <item>
                <widget class="QCheckBox" name="healthCareOverloadedCheckBox">
                 <property name="text">
                  <string>Health care system can fail</string>

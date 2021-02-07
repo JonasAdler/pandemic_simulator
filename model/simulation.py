@@ -4,7 +4,7 @@ import csv
 from model.healthconditions import healthconditions
 
 class Simulation:
-    def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealthcare):
+    def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealthcare, modifierVaccine, vaccineDays):
         print("Simulation Created")
 
         self.stepCounter = 0
@@ -20,8 +20,9 @@ class Simulation:
         self.avgInfectedTime = avgInfectedTime
         self.avgImmuneDays = avgImmuneTime
         self.infectionRadius = infectionRadius
+        self.vaccineDays = vaccineDays
 
-        self.rateOfDeathTemp = rateOfDeath
+        self.rateOfDeathReference = rateOfDeath
 
         self.dayLength = 60
         self.healthCareCapacity = 65  # capacity of 65 percent of all particles
@@ -37,6 +38,7 @@ class Simulation:
         self.modifierDeflectEnabled = modifierDeflect
         self.modifierSchoolsEnabled = modifierSchool
         self.modifierHealthCareEnabled = modifierHealthcare
+        self.modifierVaccineEnabled = modifierVaccine
 
         # create the selected amount of particles
         self.createParticle()
@@ -66,7 +68,7 @@ class Simulation:
         self.infectionRadius = radius
 
     def increaseDeathRate(self):
-        self.rateOfDeath = self.rateOfDeathTemp * 3  # rate of death increases by 300%
+        self.rateOfDeath = self.rateOfDeathReference * 3  # rate of death increases by 300%
 
     # perform a step
     def performStep(self):
@@ -91,12 +93,18 @@ class Simulation:
             if self.countInf / self.amountOfParticles > self.healthCareCapacity:
                 self.increaseDeathRate()
 
-        # one day equals 120 steps or 2 seconds,
-        # we will also change attributes (e.g. daysInfected) for each particle each day -> changeStatus()
+        # one day equals 60 steps or 1 second
+        # operations that have to occur just once a day
         if self.stepCounter % self.dayLength == 0:
-
             day = int(self.stepCounter / self.dayLength)
 
+            # vaccinate particles each day
+            if self.modifierVaccineEnabled:
+                if day >= self.vaccineDays:
+                    self.vaccinateParticles()
+
+            # change the amount of infected days, immune days, ... for each particle
+            # or, by chance kill or quarantine an infected particle
             self.changeStatus()
 
             # log the quantity of each group inside a list of lists
@@ -218,7 +226,28 @@ class Simulation:
                     for j in self.particleList[i].collisions:
                         if (self.particleList[j].status != "DECEASED" and
                                 self.particleList[j].status != "QUARANTINED"):
+                            # ToDo: Möglichkeit 1
                             self.setDirection(i)
+                            # ToDo: Möglichkeit 2
+                            #self.setOppositeDireciton(i, j)
+
+    # vaccinates particles
+    def vaccinateParticles(self):
+        vaccinationsPerDay = random.randint(1, 5)  # 1 to 10 people per day get a vaccine
+        for i in range(self.amountOfParticles):
+            # vaccinate particles with the necessary conditions
+            if self.particleList[i].isVaccinated == False and self.particleList[i].status == "HEALTHY":
+                self.particleList[i].isVaccinated = True
+                self.particleList[i].status = "IMMUNE"
+                # assumption that the vaccine will not subside in the small time frame of the simulator
+                self.particleList[i].immuneDays = 99999
+                vaccinationsPerDay = vaccinationsPerDay - 1
+            # stop if there are no vaccines left for the day
+            if vaccinationsPerDay == 0:
+                break
+
+
+
 
     # changes the behaviour of each particle for the different conditions
     def changeStatus(self):
@@ -322,3 +351,28 @@ class Simulation:
             self.particleList[i].direction = "SO"
         if direction == 4:
             self.particleList[i].direction = "NW"
+
+    def setOppositeDireciton(self, i, j):
+        if self.particleList[i].direction == "NW":
+            self.particleList[i].direction = "SO"
+
+        elif self.particleList[i].direction == "SW":
+            self.particleList[i].direction = "NO"
+
+        elif self.particleList[i].direction == "NO":
+            self.particleList[i].direction = "SW"
+
+        elif self.particleList[i].direction == "SO":
+            self.particleList[i].direction = "NW"
+
+        if self.particleList[j].direction == "NW":
+            self.particleList[j].direction = "SO"
+
+        elif self.particleList[j].direction == "SW":
+            self.particleList[j].direction = "NO"
+
+        elif self.particleList[j].direction == "NO":
+            self.particleList[j].direction = "SW"
+
+        elif self.particleList[j].direction == "SO":
+            self.particleList[j].direction = "NW"
