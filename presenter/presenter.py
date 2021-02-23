@@ -30,21 +30,24 @@ class Presenter(QtCore.QObject):
             self.simulation.performStep()
             self.ui.drawItems(self.simulation.getParticleList())
             self.ui.updateScene()
-            self.ui.updateLCD(self.simulation.getData(), self.simulation.getQuantityList())
-            self.ui.plotGraph(self.simulation.getQuantityList())
-            #self.ui.updateData(self.simulation.getData())
+            self.ui.updateElements(self.simulation.getDays(), self.simulation.getQuantityList())
 
     # create the simulation and hand it all the predetermined values
-    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth, modifierVaccine, vaccineDays):
+    def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine,
+                        avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierHealth,
+                        modifierVaccine, socialDistanceRadius, vaccineDays, healthCareCapacity, deathRateMultiplier):
         self.isSimulationRunning = True
         print("Hello World from Presenter")
-        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierSchool, modifierHealth, modifierVaccine, vaccineDays)
+        self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath,
+                                     riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius,
+                                     modifierDeflect, modifierHealth, modifierVaccine, socialDistanceRadius,
+                                     vaccineDays, healthCareCapacity, deathRateMultiplier)
         self.ui.startSimulation()
 
     # pause the simulation
     def pauseSimulation(self):
         self.isSimulationRunning = False
-        print("Simulation is paused at {} days.".format(self.simulation.stepCounter/120))
+        print("Simulation is paused at {} days.".format(self.simulation.stepCounter/60))
 
     # resume the simulation
     def resumeSiumlation(self):
@@ -69,7 +72,7 @@ class Presenter(QtCore.QObject):
     def writeInCsv(self, path, filetype, granularity, quantityList):
         with open(path, mode='w', newline='') as self.f:
             self.writer = csv.writer(self.f)
-            fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased"]
+            fieldnames = ["Step", "Healthy", "Infected", "Immune", "Deceased", "Alive"]
             self.writer.writerow(fieldnames)
             self.writer.writerow(quantityList[0])
             for i in range(granularity, len(quantityList), granularity):
@@ -86,9 +89,7 @@ class Presenter(QtCore.QObject):
 
     # ...change rate of death
     def changeRate(self, rate):
-        print("changerate")
         if self.simulation:
-            print("changerate inside")
             self.simulation.changeRateOfDeathS(rate)
 
     # ...change risk of being quarantined
