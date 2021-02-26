@@ -1,15 +1,17 @@
 import pyqtgraph as pg
 import numpy as np
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QBrush, QPen
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from view.mainwindow import Ui_MainWindow
+from resources import constVariables
 
+from view.mainwindow import Ui_MainWindow
+from view.granularityWindow import Ui_Dialog
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
-
     startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int,
                                               bool, bool, bool, int, int, int, int)
     pauseSimulationSignal = QtCore.pyqtSignal()
@@ -53,7 +55,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connectSignals()
 
         # set the scene and initialize necessary tools
-        self.scene = QtWidgets.QGraphicsScene(0, 0, 500, 500)
+        self.scene = QtWidgets.QGraphicsScene(0, 0, constVariables.worldSize, constVariables.worldSize)
         self.redBrush = QBrush(Qt.red)
         self.greenBrush = QBrush(Qt.green)
         self.greyBrush = QBrush(Qt.gray)
@@ -61,7 +63,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
 
-        self.granularity = self.granularitySpinBox.value()
+        #self.granularity = self.granularitySpinBox.value()
 
         # set the color of the LCDs
         self.palette = self.daysPassedLCD.palette()
@@ -98,16 +100,19 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.graphicWidget.setBackground("w")
         self.graphicWidget.addLegend()
-        self.plotHealthy = self.graphicWidget.plot(np.arange(int(self.counter/60)), self.healthyPlot,
-                                                   pen=pg.mkPen(width=3, color="g"), name="Healthy")
-        self.plotInfected = self.graphicWidget.plot(np.arange(int(self.counter/60)), self.infectedPlot,
-                                                    pen=pg.mkPen(width=3, color="r"), name="Infected")
-        self.plotImmune = self.graphicWidget.plot(np.arange(int(self.counter/60)), self.immunePlot,
-                                                  pen=pg.mkPen(width=3, color=(255, 255, 0)), name="Immune")
-        self.plotDeceased = self.graphicWidget.plot(np.arange(int(self.counter/60)), self.deceasedPlot,
-                                                    pen=pg.mkPen(width=3, color=(80, 80, 80)), name="Deceased")
-        self.plotCapacity = self.graphicWidget.plot(np.arange(int(self.counter/60)),
-                                                    np.full((int(self.counter/60),),
+        self.plotHealthy = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                   self.healthyPlot, pen=pg.mkPen(width=3, color="g"), name="Healthy")
+        self.plotInfected = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    self.infectedPlot, pen=pg.mkPen(width=3, color="r"),
+                                                    name="Infected")
+        self.plotImmune = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                  self.immunePlot, pen=pg.mkPen(width=3, color=(255, 255, 0)),
+                                                  name="Immune")
+        self.plotDeceased = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    self.deceasedPlot, pen=pg.mkPen(width=3, color=(80, 80, 80)),
+                                                    name="Deceased")
+        self.plotCapacity = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    np.full((int(self.counter / constVariables.dayLength),),
                                                             self.healthCareCapacitySpinBox.value()),
                                                     pen=pg.mkPen(width=3, color="r", style=QtCore.Qt.DotLine),
                                                     name="Capacity")
@@ -127,7 +132,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.healthCareOverloadedCheckBox.clicked.connect(self.healthCareCheckBoxClicked)
 
         # parameters
-        self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
+        #self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
         self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
         self.rateOfDeathSpinBox.valueChanged.connect(self.rateOfDeathChanged)
         self.percentageQuarantineSpinBox.valueChanged.connect(self.percentageOfQuarantineChanged)
@@ -137,14 +142,14 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.speedOfSimSlider.valueChanged.connect(self.speedOfSimChanged)
 
-# accumulation of events that happen, if buttons are pressed
+    # accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
         # if no error, pass all the start values to the presenter
         if self.entitiesSpinBox.value() >= self.initiallyInfectedSpinBox.value():
             self.startSimulationSignal.emit(self.entitiesSpinBox.value(), self.initiallyInfectedSpinBox.value(),
-                                            self.riskOfInfSpinBox.value()*10, self.rateOfDeathSpinBox.value()*10,
-                                            self.percentageQuarantineSpinBox.value()*10,
+                                            self.riskOfInfSpinBox.value() * 10, self.rateOfDeathSpinBox.value() * 10,
+                                            self.percentageQuarantineSpinBox.value() * 10,
                                             self.avgInfectionTimeSpinBox.value(),
                                             self.avgImmuneTimeSpinBox.value(), self.infectionRadiusSpinBox.value(),
                                             self.deflectEachOtherCheckBox.isChecked(),
@@ -152,7 +157,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                             self.vaccineCheckBox.isChecked(), self.socialDistancingSpinBox.value(),
                                             self.vaccineDaysSpinBox.value(), self.healthCareCapacitySpinBox.value(),
                                             self.deathRateMultiplierSpinBox.value())
-            # disable the modifiers
+            # disable modifiers and spin boxes
             self.socialDistancingLabel.setDisabled(True)
             self.socialDistancingSpinBox.setDisabled(True)
             self.vaccineCheckBox.setDisabled(True)
@@ -165,6 +170,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             self.healthCareCapacitySpinBox.setDisabled(True)
             self.deathRateMultiplierSpinBox.setDisabled(True)
 
+            self.entitiesSpinBox.setDisabled(True)
+            self.initiallyInfectedSpinBox.setDisabled(True)
+
             # show/hide the buttons
             self.startSimButton.hide()
             self.pauseSimButton.show()
@@ -172,7 +180,9 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             self.exportCsvButton.show()
             self.resetParameterButton.hide()
 
-            self.simulationGraphicsView.fitInView(0, 0, 500, 500)
+            # fit the scene
+            self.simulationGraphicsView.fitInView(0, 0, constVariables.worldSize, constVariables.worldSize)
+
         # if there are more particles initially infected than total
         else:
             self.errorTooManyInfected()
@@ -196,7 +206,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.startSimButton.show()
         self.resetParameterButton.show()
         self.warningCapacityLabel.hide()
-        self.simulationGraphicsView.fitInView(0, 0, 500, 500)
+        self.simulationGraphicsView.fitInView(0, 0, constVariables.worldSize, constVariables.worldSize)
         self.resetValues()
 
     # resets all the values to the state they were in before the simulation has started
@@ -223,18 +233,21 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # reset multiply lcd to black
         self.multiplyLCD.setPalette(self.palette)
 
-        # enable the modifiers
+        # enable the modifiers and spin boxes
         self.socialDistancingLabel.setEnabled(True)
         self.socialDistancingSpinBox.setEnabled(True)
-        self.vaccineCheckBox.setDisabled(False)
-        self.healthCareOverloadedCheckBox.setDisabled(False)
-        self.deflectEachOtherCheckBox.setDisabled(False)
-        self.vaccineDaysLabel.setDisabled(False)
-        self.vaccineDaysSpinBox.setDisabled(False)
-        self.capacityLabel.setDisabled(False)
-        self.deathRateMultiplierLabel.setDisabled(False)
-        self.healthCareCapacitySpinBox.setDisabled(False)
-        self.deathRateMultiplierSpinBox.setDisabled(False)
+        self.vaccineCheckBox.setEnabled(True)
+        self.healthCareOverloadedCheckBox.setEnabled(True)
+        self.deflectEachOtherCheckBox.setEnabled(True)
+        self.vaccineDaysLabel.setEnabled(True)
+        self.vaccineDaysSpinBox.setEnabled(True)
+        self.capacityLabel.setEnabled(True)
+        self.deathRateMultiplierLabel.setEnabled(True)
+        self.healthCareCapacitySpinBox.setEnabled(True)
+        self.deathRateMultiplierSpinBox.setEnabled(True)
+
+        self.entitiesSpinBox.setEnabled(True)
+        self.initiallyInfectedSpinBox.setEnabled(True)
 
         # reset plot variables
         self.healthyPlot = []
@@ -244,16 +257,19 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # clear the graph widget and recreate the plots
         self.graphicWidget.clear()
-        self.plotHealthy = self.graphicWidget.plot(np.arange(int(self.counter / 60)), self.healthyPlot,
-                                                   pen=pg.mkPen(width=3, color="g"), name="Healthy")
-        self.plotInfected = self.graphicWidget.plot(np.arange(int(self.counter / 60)), self.infectedPlot,
-                                                    pen=pg.mkPen(width=3, color="r"), name="Infected")
-        self.plotImmune = self.graphicWidget.plot(np.arange(int(self.counter / 60)), self.immunePlot,
-                                                  pen=pg.mkPen(width=3, color=(255, 255, 0)), name="Immune")
-        self.plotDeceased = self.graphicWidget.plot(np.arange(int(self.counter / 60)), self.deceasedPlot,
-                                                    pen=pg.mkPen(width=3, color=(0, 0, 0)), name="Deceased")
-        self.plotCapacity = self.graphicWidget.plot(np.arange(int(self.counter / 60)),
-                                                    np.full((int(self.counter / 60),),
+        self.plotHealthy = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                   self.healthyPlot, pen=pg.mkPen(width=3, color="g"), name="Healthy")
+        self.plotInfected = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    self.infectedPlot, pen=pg.mkPen(width=3, color="r"),
+                                                    name="Infected")
+        self.plotImmune = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                  self.immunePlot, pen=pg.mkPen(width=3, color=(255, 255, 0)),
+                                                  name="Immune")
+        self.plotDeceased = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    self.deceasedPlot, pen=pg.mkPen(width=3, color=(0, 0, 0)),
+                                                    name="Deceased")
+        self.plotCapacity = self.graphicWidget.plot(np.arange(int(self.counter / constVariables.dayLength)),
+                                                    np.full((int(self.counter / constVariables.dayLength),),
                                                             self.healthCareCapacitySpinBox.value()),
                                                     pen=pg.mkPen(width=3, color="r", style=QtCore.Qt.DotLine),
                                                     name="Capacity")
@@ -261,26 +277,26 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     # resets all variables and parameters to default values
     def resetParamsClicked(self):
         # reset parameters on left side
-        self.entitiesSpinBox.setValue(50)
-        self.initiallyInfectedSpinBox.setValue(5)
-        self.granularitySpinBox.setValue(1)
+        self.entitiesSpinBox.setValue(constVariables.entitiesSpinBoxDefault)
+        self.initiallyInfectedSpinBox.setValue(constVariables.initiallyInfectedSpinBoxDefault)
+        self.granularitySpinBox.setValue(constVariables.granularitySpinBoxDefault)
 
         # reset parameters on the right side
-        self.riskOfInfSpinBox.setValue(5.0)
-        self.rateOfDeathSpinBox.setValue(1.0)
-        self.percentageQuarantineSpinBox.setValue(20.0)
-        self.avgInfectionTimeSpinBox.setValue(7)
-        self.avgImmuneTimeSpinBox.setValue(10)
-        self.infectionRadiusSpinBox.setValue(10)
+        self.riskOfInfSpinBox.setValue(constVariables.riskOfInfSpinBoxDefault)
+        self.rateOfDeathSpinBox.setValue(constVariables.rateOfDeathSpinBoxDefault)
+        self.percentageQuarantineSpinBox.setValue(constVariables.percentageQuarantineSpinBoxDefault)
+        self.avgInfectionTimeSpinBox.setValue(constVariables.avgInfectionTimeSpinBoxDefault)
+        self.avgImmuneTimeSpinBox.setValue(constVariables.avgImmuneTimeSpinBoxDefault)
+        self.infectionRadiusSpinBox.setValue(constVariables.infectionRadiusSpinBoxDefault)
 
         # reset remaining parameters
-        self.speedOfSimSlider.setValue(60)
-        self.socialDistancingSpinBox.setValue(8)
-        self.vaccineDaysSpinBox.setValue(15)
-        self.healthCareCapacitySpinBox.setValue(65)
-        self.deathRateMultiplierSpinBox.setValue(1.0)
+        self.speedOfSimSlider.setValue(constVariables.speedOfSimSliderDefault)
+        self.socialDistancingSpinBox.setValue(constVariables.socialDistancingSpinBoxDefault)
+        self.vaccineDaysSpinBox.setValue(constVariables.vaccineDaysSpinBoxDefault)
+        self.healthCareCapacitySpinBox.setValue(constVariables.healthCareCapacitySpinBoxDefault)
+        self.deathRateMultiplierSpinBox.setValue(constVariables.deathRateMultiplierSpinBoxDefault)
 
-# drop-down managing
+    # drop-down managing
     def healthCareCheckBoxClicked(self):
         if self.healthCareOverloadedCheckBox.isChecked():
             self.capacityLabel.show()
@@ -309,18 +325,18 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             self.socialDistancingLabel.hide()
             self.socialDistancingSpinBox.hide()
 
-# parameter change methods
+    # parameter change methods
     def granularityChanged(self):
         self.granularity = self.granularitySpinBox.value()
 
     def riskOfInfectionChanged(self):
-        self.riskOfInfectionSignal.emit(self.riskOfInfSpinBox.value()*10)  # "*10" to get a whole number
+        self.riskOfInfectionSignal.emit(self.riskOfInfSpinBox.value() * 10)  # "*10" to get a whole number
 
     def rateOfDeathChanged(self):
-        self.rateOfDeathSignal.emit(self.rateOfDeathSpinBox.value()*10)
+        self.rateOfDeathSignal.emit(self.rateOfDeathSpinBox.value() * 10)
 
     def percentageOfQuarantineChanged(self):
-        self.riskOfQuarantineSignal.emit(self.percentageQuarantineSpinBox.value()*10)
+        self.riskOfQuarantineSignal.emit(self.percentageQuarantineSpinBox.value() * 10)
 
     def avgInfectedTimeChanged(self):
         self.avgInfectionTimeSignal.emit(self.avgInfectionTimeSpinBox.value())
@@ -342,12 +358,12 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def startSimulation(self):
         print("SIMULATION STARTED!")
 
-# update visible elements
+    # update visible elements
 
     # updates the scene on the graphicsView
     def updateScene(self):
         self.simulationGraphicsView.setScene(self.scene)
-        self.simulationGraphicsView.fitInView(0, 0, 500, 500)
+        self.simulationGraphicsView.fitInView(0, 0, constVariables.worldSize, constVariables.worldSize)
 
     # draws the particles on the scene with right color, quantity,...
     # -> needs to take an input for the amount of simulated particles later
@@ -357,21 +373,21 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scene.clear()
 
         for i in range(len(particleList)):
-            if particleList[i].status == "HEALTHY":
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
-                                                     8, self.pen, self.greenBrush)
-            elif particleList[i].status == "INFECTED":
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
-                                                     8, self.pen, self.redBrush)
-            elif particleList[i].status == "DECEASED":
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
-                                                     8, self.pen, self.greyBrush)
-            elif particleList[i].status == "IMMUNE":
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
-                                                     8, self.pen, self.yellowBrush)
-            elif particleList[i].status == "QUARANTINED":
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, 8,
-                                                     8, self.pen, self.whiteBrush)
+            if particleList[i].status == constVariables.healthy:
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                                                     constVariables.particleSize, self.pen, self.greenBrush)
+            elif particleList[i].status == constVariables.infected:
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                                                     constVariables.particleSize, self.pen, self.redBrush)
+            elif particleList[i].status == constVariables.deceased:
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                                                     constVariables.particleSize, self.pen, self.greyBrush)
+            elif particleList[i].status == constVariables.immune:
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                                                     constVariables.particleSize, self.pen, self.yellowBrush)
+            elif particleList[i].status == constVariables.quarantined:
+                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                                                     constVariables.particleSize, self.pen, self.whiteBrush)
 
     # get user input path and return parameters for export
     def getExportParameters(self):
@@ -380,7 +396,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         path, filetype = QFileDialog.getSaveFileName(self, "Save File")
 
         # return the path (and the filetype)
-        return path, filetype, self.granularity
+        return path, filetype, self.granularitySpinBox.value()
 
     # opens up an error message box
     def errorTooManyInfected(self):
@@ -391,7 +407,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         msg.setStandardButtons(QMessageBox.Close)
         x = msg.exec()
 
-# update elements
+    # update elements
     # updates elements such as the counter, LCDs, the information for the plots, ...
     def updateElements(self, days, quantityList):
 
@@ -406,7 +422,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # if capacity gets overrun -> show the label
         if self.healthCareOverloadedCheckBox.isChecked() and \
-                int(quantityList[days][2]*100 / self.entitiesSpinBox.value()) > self.healthCareCapacitySpinBox.value():
+                int(quantityList[days][
+                        2] * 100 / self.entitiesSpinBox.value()) > self.healthCareCapacitySpinBox.value():
             self.warningCapacityLabel.show()
         else:
             self.warningCapacityLabel.hide()
@@ -454,26 +471,27 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     # updates the "speed multiplier"-LCD
     def updateMultiplier(self):
         # Format the multiply
-        multi_lcd = '{0:0.1f}'.format(self.speedOfSimSlider.value()/60)
+        multi_lcd = '{0:0.1f}'.format(self.speedOfSimSlider.value() / constVariables.dayLength)
         self.multiplyLCD.setPalette(self.palette)
         self.multiplyLCD.display(multi_lcd)
 
     # function for plotting the graph
     def plotGraph(self):
         # plot each second
-        if self.counter % 60 == 0:
+        if self.counter % constVariables.dayLength == 0:
             # update the plot data
-            self.healthyPlot.append(self.quantityList[int(self.counter/60)][1])
-            self.infectedPlot.append(self.quantityList[int(self.counter/60)][2])
-            self.immunePlot.append(self.quantityList[int(self.counter/60)][3])
-            self.deceasedPlot.append(self.quantityList[int(self.counter/60)][4])
+            self.healthyPlot.append(self.quantityList[int(self.counter / constVariables.dayLength)][1])
+            self.infectedPlot.append(self.quantityList[int(self.counter / constVariables.dayLength)][2])
+            self.immunePlot.append(self.quantityList[int(self.counter / constVariables.dayLength)][3])
+            self.deceasedPlot.append(self.quantityList[int(self.counter / constVariables.dayLength)][4])
             # plot the graph
-            self.plotHealthy.setData(np.arange(self.counter / 60), self.healthyPlot)
-            self.plotInfected.setData(np.arange(self.counter / 60), self.infectedPlot)
-            self.plotImmune.setData(np.arange(self.counter / 60), self.immunePlot)
-            self.plotDeceased.setData(np.arange(self.counter / 60), self.deceasedPlot)
+            self.plotHealthy.setData(np.arange(self.counter / constVariables.dayLength), self.healthyPlot)
+            self.plotInfected.setData(np.arange(self.counter / constVariables.dayLength), self.infectedPlot)
+            self.plotImmune.setData(np.arange(self.counter / constVariables.dayLength), self.immunePlot)
+            self.plotDeceased.setData(np.arange(self.counter / constVariables.dayLength), self.deceasedPlot)
+            # if modifier is activated the capacity also gets plotted
             if self.healthCareOverloadedCheckBox.isChecked():
-                self.plotCapacity.setData(np.arange(int(self.counter / 60)),
-                                          np.full((int(self.counter / 60),),
-                                          int((self.healthCareCapacitySpinBox.value() *
-                                               self.entitiesSpinBox.value()))/100))
+                self.plotCapacity.setData(np.arange(int(self.counter / constVariables.dayLength)),
+                                          np.full((int(self.counter / constVariables.dayLength),),
+                                                  int((self.healthCareCapacitySpinBox.value() *
+                                                       self.entitiesSpinBox.value())) / 100))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindowWidgetTest.ui'
+# Form implementation generated from reading ui file 'mainwindowAlmostReady.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(920, 845)
+        MainWindow.resize(841, 781)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -119,7 +119,7 @@ class Ui_MainWindow(object):
         self.healthCareCapacitySpinBox.setMinimumSize(QtCore.QSize(60, 0))
         self.healthCareCapacitySpinBox.setMaximumSize(QtCore.QSize(60, 60))
         self.healthCareCapacitySpinBox.setMaximum(100)
-        self.healthCareCapacitySpinBox.setProperty("value", 65)
+        self.healthCareCapacitySpinBox.setProperty("value", 35)
         self.healthCareCapacitySpinBox.setObjectName("healthCareCapacitySpinBox")
         self.horizontalLayout_20.addWidget(self.healthCareCapacitySpinBox)
         self.verticalLayout_6.addLayout(self.horizontalLayout_20)
@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         self.infectionRadiusSpinBox.setMaximumSize(QtCore.QSize(150, 16777215))
         self.infectionRadiusSpinBox.setMinimum(1)
         self.infectionRadiusSpinBox.setMaximum(100)
-        self.infectionRadiusSpinBox.setProperty("value", 10)
+        self.infectionRadiusSpinBox.setProperty("value", 16)
         self.infectionRadiusSpinBox.setObjectName("infectionRadiusSpinBox")
         self.horizontalLayout_18.addWidget(self.infectionRadiusSpinBox)
         self.verticalLayout_3.addLayout(self.horizontalLayout_18)
@@ -377,6 +377,8 @@ class Ui_MainWindow(object):
         self.multiplyLCD.setProperty("intValue", 1)
         self.multiplyLCD.setObjectName("multiplyLCD")
         self.horizontalLayout_16.addWidget(self.multiplyLCD)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_16.addItem(spacerItem)
         self.warningCapacityLabel = QtWidgets.QLabel(self.centralwidget)
         self.warningCapacityLabel.setMinimumSize(QtCore.QSize(300, 0))
         font = QtGui.QFont()
@@ -392,6 +394,9 @@ class Ui_MainWindow(object):
         self.startSimButton.setObjectName("startSimButton")
         self.horizontalLayout_8.addWidget(self.startSimButton)
         self.resetSimButton = QtWidgets.QPushButton(self.centralwidget)
+        self.resetSimButton.setAutoDefault(False)
+        self.resetSimButton.setDefault(False)
+        self.resetSimButton.setFlat(False)
         self.resetSimButton.setObjectName("resetSimButton")
         self.horizontalLayout_8.addWidget(self.resetSimButton)
         self.pauseSimButton = QtWidgets.QPushButton(self.centralwidget)
@@ -411,7 +416,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 920, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 841, 21))
         self.menubar.setObjectName("menubar")
         self.menuAdvanced_Options = QtWidgets.QMenu(self.menubar)
         self.menuAdvanced_Options.setObjectName("menuAdvanced_Options")
@@ -445,9 +450,9 @@ class Ui_MainWindow(object):
         self.entitiesLabel.setText(_translate("MainWindow", "Select amount of entities (1- 200): "))
         self.initiallyInfectedLabel.setText(_translate("MainWindow", "Select initially infected entities:"))
         self.modifierLabel.setText(_translate("MainWindow", "Select modifier:"))
-        self.deflectEachOtherCheckBox.setText(_translate("MainWindow", "Particles deflect each other"))
+        self.deflectEachOtherCheckBox.setText(_translate("MainWindow", "Social distancing"))
         self.socialDistancingLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-style:italic;\">Select the social distancing distance for the particles! (Min value = size of particle = 8, Max value = 2x size of particle = 16)</span></p></body></html>"))
-        self.socialDistancingLabel.setText(_translate("MainWindow", "Social distancing distance:"))
+        self.socialDistancingLabel.setText(_translate("MainWindow", "Social distancing radius:"))
         self.vaccineCheckBox.setText(_translate("MainWindow", "Develop a vaccine"))
         self.vaccineDaysLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-style:italic;\">How many days it takes until the vaccine is ready to use!</span></p></body></html>"))
         self.vaccineDaysLabel.setText(_translate("MainWindow", "Development in days:"))
@@ -466,7 +471,7 @@ class Ui_MainWindow(object):
         self.percentageOfQuarantineLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">% of being quarantined for an infected particle each day</span></p></body></html>"))
         self.percentageOfQuarantineLabel.setText(_translate("MainWindow", "Select percentage of being quarantined:"))
         self.avgInfectionTimeLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Randomly selects a time within a deviation of 25% of the selected value</span></p></body></html>"))
-        self.avgInfectionTimeLabel.setText(_translate("MainWindow", "Select average infectied-time in days:"))
+        self.avgInfectionTimeLabel.setText(_translate("MainWindow", "Select average infection-time in days:"))
         self.avgImmuneTimeLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Randomly selects a time within a deviation of 25% of the selected value</span></p></body></html>"))
         self.avgImmuneTimeLabel.setText(_translate("MainWindow", "Select average immune-time in days:"))
         self.infectionRadiusLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Comparison: Size of a particle is &quot;8&quot;</span></p></body></html>"))

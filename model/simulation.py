@@ -2,6 +2,8 @@ import random
 import model.myParticle
 import csv
 from model.healthconditions import healthconditions
+from resources import constVariables
+
 
 class Simulation:
     def __init__(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine,
@@ -10,8 +12,6 @@ class Simulation:
         print("Simulation Created")
 
         self.stepCounter = 0
-
-        self.boundary = 492
 
         # default-parameters for all the necessary values
         self.amountOfParticles = amountOfParticles
@@ -25,11 +25,10 @@ class Simulation:
         self.socialDistancingRadius = socialDistancingRadius
         self.vaccineDays = vaccineDays
 
-        # create a reference value that saves the given
+        # create a reference value that saves the selected "rate of death" input
         self.rateOfDeathReference = rateOfDeath
 
-        self.dayLength = 60
-        self.healthCareCapacity = healthCareCapacity  # capacity of 65 percent of all particles
+        self.healthCareCapacity = healthCareCapacity
         self.deathRateMultiplier = deathRateMultiplier
 
         self.countHealthy = amountOfParticles - initiallyInfected
@@ -84,16 +83,15 @@ class Simulation:
 
         # we want each particle to move with a constant amount of time in between, so that the simulation looks smooth
         # ->Solution: Moving a particle with each step the program makes.
-
-        self.moveParticle()
+        for i in range(self.amountOfParticles):
+            self.particleList[i].moveParticle()
 
         # we also want to change the state of the particles after contact with infected ones
 
         self.infectParticle()
 
-        # deflect the particles if it is enabled
-        if self.modifierDeflectEnabled:
-            self.changeDirectionAfterCollision()
+        # particles deflect each other
+        self.changeDirectionAfterCollision()
 
         if self.modifierHealthCareEnabled:
             # if more then "self.healthCareCapacity" of the population is infected -> Increase death rate
@@ -105,10 +103,10 @@ class Simulation:
 
         # one day equals 60 steps or 1 second
         # operations that have to occur just once a day
-        if self.stepCounter % self.dayLength == 0:
-            day = int(self.stepCounter / self.dayLength)
+        if self.stepCounter % constVariables.dayLength == 0:
+            day = int(self.stepCounter / constVariables.dayLength)
 
-            # vaccinate particles each day
+            # vaccinate particles each day if modifier enabled
             if self.modifierVaccineEnabled:
                 if day >= self.vaccineDays:
                     self.vaccinateParticles()
@@ -118,14 +116,12 @@ class Simulation:
             self.changeStatus()
 
             # log the quantity of each group inside a list of lists
-            self.quantityList.append([int(self.stepCounter/self.dayLength), self.countHealthy, self.countInf,
+            self.quantityList.append([int(self.stepCounter/constVariables.dayLength), self.countHealthy, self.countInf,
                                       self.countImmune, self.countDeceased, self.countStillAlive])
             print("Days passed since the outbreak: {}".format(day))
 
-
-
     def getDays(self):
-        return int(self.stepCounter / self.dayLength)
+        return int(self.stepCounter / constVariables.dayLength)
 
     def getStepCounter(self):
         return self.stepCounter
@@ -142,73 +138,17 @@ class Simulation:
     def createParticle(self):
         for i in range(self.amountOfParticles):
             # creating a particle object and saving it in a list
-            randomX = random.randint(0, self.boundary)
-            randomY = random.randint(0, self.boundary)
-
+            randomX = random.randint(0, constVariables.boundary)
+            randomY = random.randint(0, constVariables.boundary)
             # create a particle
             self.particleList[i] = model.myParticle.MyParticle(randomX, randomY)
-
             # give the particle a random start-direction
-            self.setDirection(i)
+            self.particleList[i].setDirection()
 
         # infect
         for i in range(self.initiallyInfected):
-            self.particleList[i].status = "INFECTED"
+            self.particleList[i].status = constVariables.infected
             self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - 2, self.avgInfectedTime + 2)
-
-    # moves the particle in a random direction, but will not let it go out of bounds
-    def moveParticle(self):
-        for i in range(self.amountOfParticles):
-            # tells the particle which way to move with its corresponding direction attribute
-            if self.particleList[i].direction == "NO":
-                dx = 1
-                dy = -1
-            elif self.particleList[i].direction == "NW":
-                dx = -1
-                dy = -1
-            elif self.particleList[i].direction == "SO":
-                dx = 1
-                dy = 1
-            elif self.particleList[i].direction == "SW":
-                dx = -1
-                dy = 1
-            else:
-                dx = 0
-                dy = 0
-
-            # if possible, move the particle
-            if 0 < self.particleList[i].x + dx < self.boundary and 0 < self.particleList[i].y + dy < self.boundary:
-                self.particleList[i].x = self.particleList[i].x + dx
-                self.particleList[i].y = self.particleList[i].y + dy
-            else:
-                newDirection = random.randint(1, 2)
-
-                if self.particleList[i].x + dx >= self.boundary:  # only possible direction is West
-                    if newDirection == 1:
-                        self.particleList[i].direction = "NW"
-                    if newDirection == 2:
-                        self.particleList[i].direction = "SW"
-
-                elif self.particleList[i].x + dx <= 0:  # only possible direction is East
-                    if newDirection == 1:
-                        self.particleList[i].direction = "NO"
-                    if newDirection == 2:
-                        self.particleList[i].direction = "SO"
-
-                elif self.particleList[i].y + dy >= self.boundary:  # only possible direction is North
-                    if newDirection == 1:
-                        self.particleList[i].direction = "NW"
-                    if newDirection == 2:
-                        self.particleList[i].direction = "NO"
-
-                elif self.particleList[i].y + dy <= 0:  # only possible direction is South
-                    if newDirection == 1:
-                        self.particleList[i].direction = "SW"
-                    if newDirection == 2:
-                        self.particleList[i].direction = "SO"
-
-                # process through the same particle again
-                i = i - 1
 
     # will change the state of a particle after colliding with another
     def infectParticle(self):
@@ -224,16 +164,18 @@ class Simulation:
                 for j in self.particleList[i].infectionCollisions:
                     if randomRisk < self.riskOfInfection:
                         # either "i" is infected infects "j"...
-                        if (self.particleList[i].status == "INFECTED") and (self.particleList[j].status == "HEALTHY"):
-                            self.particleList[j].status = "INFECTED"
+                        if (self.particleList[i].status == constVariables.infected) \
+                                and (self.particleList[j].status == constVariables.healthy):
+                            self.particleList[j].status = constVariables.infected
                             # deviation of 25% of the selected average -> Infection time different for each particle
                             self.particleList[j].daysInfected = random.randint(self.avgInfectedTime -
                                                                                int(self.avgInfectedTime*0.25),
                                                                                self.avgInfectedTime +
                                                                                int(self.avgInfectedTime*0.25))
                         # ...or "i" is healthy and gets infected by "j"
-                        if (self.particleList[i].status == "HEALTHY") and (self.particleList[j].status == "INFECTED"):
-                            self.particleList[i].status = "INFECTED"
+                        if (self.particleList[i].status == constVariables.healthy) \
+                                and (self.particleList[j].status == constVariables.infected):
+                            self.particleList[i].status = constVariables.infected
                             self.particleList[i].daysInfected = random.randint(self.avgInfectedTime -
                                                                                int(self.avgInfectedTime*0.25),
                                                                                self.avgInfectedTime +
@@ -244,11 +186,11 @@ class Simulation:
         for i in range(self.amountOfParticles - 1):
             if len(self.particleList[i].deflectionCollisions) > 0:
                 # dead and quarantined particles are excluded from collisions
-                if (self.particleList[i].status != "DECEASED" and
-                        self.particleList[i].status != "QUARANTINED"):
+                if (self.particleList[i].status != constVariables.deceased and
+                        self.particleList[i].status != constVariables.quarantined):
                     for j in self.particleList[i].deflectionCollisions:
-                        if (self.particleList[j].status != "DECEASED" and
-                                self.particleList[j].status != "QUARANTINED"):
+                        if (self.particleList[j].status != constVariables.deceased and
+                                self.particleList[j].status != constVariables.quarantined):
                             # give the particles new directions
                             self.setOppositeDirection(i, j)
 
@@ -258,9 +200,9 @@ class Simulation:
         vaccinationsPerDay = random.randint(1, int(self.amountOfParticles*0.05))
         for i in range(self.amountOfParticles):
             # vaccinate particles with the necessary conditions
-            if not self.particleList[i].isVaccinated and self.particleList[i].status == "HEALTHY":
+            if not self.particleList[i].isVaccinated and self.particleList[i].status == constVariables.healthy:
                 self.particleList[i].isVaccinated = True
-                self.particleList[i].status = "IMMUNE"
+                self.particleList[i].status = constVariables.immune
                 # assumption that the vaccine will not subside in the small time frame of the simulator
                 self.particleList[i].immuneDays = 99999
                 vaccinationsPerDay = vaccinationsPerDay - 1
@@ -306,20 +248,20 @@ class Simulation:
 
         # if a particle is still infected and the probability occurs -> kill the particle
         if randomDeath < self.rateOfDeath and self.particleList[i].daysInfected > 0:
-            self.particleList[i].status = "DECEASED"
+            self.particleList[i].status = constVariables.deceased
             self.particleList[i].daysInfected = 0
             self.particleList[i].direction = None
 
         # if a particle is still infected and the probability occurs -> quarantine the particle
         if randomQuarantine < self.riskOfQuarantine and self.particleList[i].daysInfected > 0:
-            self.particleList[i].status = "QUARANTINED"
+            self.particleList[i].status = constVariables.quarantined
             self.particleList[i].direction = None
             self.particleList[i].daysQuarantined = self.particleList[i].daysInfected + 1
             self.particleList[i].daysInfected = 0
 
-        # if the particle survived the infection -> set the status to "IMMUNE"
-        if self.particleList[i].daysInfected == 0 and self.particleList[i].status == "INFECTED":
-            self.particleList[i].status = "IMMUNE"
+        # if the particle survived the infection -> set the status to constVariables.immune
+        if self.particleList[i].daysInfected == 0 and self.particleList[i].status == constVariables.infected:
+            self.particleList[i].status = constVariables.immune
             # + 1 because it will immediately be decremented in the same method once
             self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - int(self.avgImmuneDays*0.25),
                                                              self.avgImmuneDays + int(self.avgImmuneDays*0.25)) + 1
@@ -330,74 +272,84 @@ class Simulation:
 
         # particles can still die in quarantine
         if randomDeath < self.rateOfDeath and self.particleList[i].daysQuarantined > 0:
-            self.particleList[i].status = "DECEASED"
+            self.particleList[i].status = constVariables.deceased
             self.particleList[i].direction = None
 
         # release one from quarantine after time is over
-        if self.particleList[i].daysQuarantined == 0 and self.particleList[i].status == "QUARANTINED":
-            self.particleList[i].status = "IMMUNE"
+        if self.particleList[i].daysQuarantined == 0 and self.particleList[i].status == constVariables.quarantined:
+            self.particleList[i].status = constVariables.immune
             self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - int(self.avgImmuneDays*0.25),
                                                              self.avgImmuneDays + int(self.avgImmuneDays*0.25)) + 1
-            self.setDirection(i)  # if the particle was quarantined it needs a new direction
+            self.particleList[i].setDirection()  # if the particle was quarantined it needs a new direction
 
     # necessary interactions with immune particles
     def updateImmune(self, i):
         self.particleList[i].daysImmune = self.particleList[i].daysImmune - 1
-        if self.particleList[i].daysImmune == 0 and self.particleList[i].status == "IMMUNE":
-            self.particleList[i].status = "HEALTHY"
+        if self.particleList[i].daysImmune == 0 and self.particleList[i].status == constVariables.immune:
+            self.particleList[i].status = constVariables.healthy
 
     # count each group
     def countGroups(self, i):
-        if self.particleList[i].status == "HEALTHY":
+        if self.particleList[i].status == constVariables.healthy:
             self.countHealthy = self.countHealthy + 1
         # assumption: as long as a particle is quarantined it counts as infected
-        elif self.particleList[i].status == "INFECTED" \
-                or self.particleList[i].status == "QUARANTINED":
+        elif self.particleList[i].status == constVariables.infected \
+                or self.particleList[i].status == constVariables.quarantined:
             self.countInf = self.countInf + 1
 
-        elif self.particleList[i].status == "IMMUNE":
+        elif self.particleList[i].status == constVariables.immune:
             self.countImmune = self.countImmune + 1
 
-        elif self.particleList[i].status == "DECEASED":
+        elif self.particleList[i].status == constVariables.deceased:
             self.countDeceased = self.countDeceased + 1
 
-    # gives random direction to particle at position "i"
-    def setDirection(self, i):
-        direction = random.randint(1, 4)
-        if direction == 1:
-            self.particleList[i].direction = "NO"
-        if direction == 2:
-            self.particleList[i].direction = "NW"
-        if direction == 3:
-            self.particleList[i].direction = "SO"
-        if direction == 4:
-            self.particleList[i].direction = "SW"
-
     def setOppositeDirection(self, i, j):
-        randomLeavingNumber = random.randint(1, 100)
-        if self.particleList[i].direction == "NW":
-            self.particleList[i].direction = "SO"
+        movements = int(self.socialDistancingRadius * 0.2)
+        # change direction for particle i
+        if self.particleList[i].direction == constVariables.NW:
 
-        elif self.particleList[i].direction == "SW":
-            self.particleList[i].direction = "NO"
+            self.particleList[i].direction = constVariables.SE
+            #for k in range(movements):
+              #  self.particleList[i].moveParticle()
 
-        elif self.particleList[i].direction == "NO":
-            self.particleList[i].direction = "SW"
+        elif self.particleList[i].direction == constVariables.SW:
 
-        elif self.particleList[i].direction == "SO":
-            self.particleList[i].direction = "NW"
-        # with a 5% chance, two "stuck" particles will try to part ways (otherwise they may be "talking" forever)
-        if randomLeavingNumber < 5:
-            return
-        else:
-            if self.particleList[j].direction == "NW":
-                self.particleList[j].direction = "SO"
+            self.particleList[i].direction = constVariables.NE
+            #for k in range(movements):
+              #  self.particleList[i].moveParticle()
 
-            elif self.particleList[j].direction == "SW":
-                self.particleList[j].direction = "NO"
+        elif self.particleList[i].direction == constVariables.NE:
 
-            elif self.particleList[j].direction == "NO":
-                self.particleList[j].direction = "SW"
+            self.particleList[i].direction = constVariables.SW
+            #for k in range(movements):
+              #  self.particleList[i].moveParticle()
 
-            elif self.particleList[j].direction == "SO":
-                self.particleList[j].direction = "NW"
+        elif self.particleList[i].direction == constVariables.SE:
+
+            self.particleList[i].direction = constVariables.NW
+            #for k in range(movements):
+              #  self.particleList[i].moveParticle()
+        # change direction for particle j
+        if self.particleList[j].direction == constVariables.NW:
+
+            self.particleList[j].direction = constVariables.SE
+            #for k in range(movements):
+             #   self.particleList[j].moveParticle()
+
+        elif self.particleList[j].direction == constVariables.SW:
+
+            self.particleList[j].direction = constVariables.NE
+            #for k in range(movements):
+            #    self.particleList[j].moveParticle()
+
+        elif self.particleList[j].direction == constVariables.NE:
+
+            self.particleList[j].direction = constVariables.SW
+            #for k in range(movements):
+            #    self.particleList[j].moveParticle()
+
+        elif self.particleList[j].direction == constVariables.SE:
+
+            self.particleList[j].direction = constVariables.NW
+            #for k in range(movements):
+            #    self.particleList[j].moveParticle()
