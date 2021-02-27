@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindowAlmostReady.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(841, 781)
+        MainWindow.resize(1220, 904)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -230,7 +230,7 @@ class Ui_MainWindow(object):
         self.avgInfectionTimeSpinBox.setMaximumSize(QtCore.QSize(150, 16777215))
         self.avgInfectionTimeSpinBox.setButtonSymbols(QtWidgets.QAbstractSpinBox.UpDownArrows)
         self.avgInfectionTimeSpinBox.setMinimum(1)
-        self.avgInfectionTimeSpinBox.setMaximum(60)
+        self.avgInfectionTimeSpinBox.setMaximum(100)
         self.avgInfectionTimeSpinBox.setProperty("value", 7)
         self.avgInfectionTimeSpinBox.setObjectName("avgInfectionTimeSpinBox")
         self.horizontalLayout_11.addWidget(self.avgInfectionTimeSpinBox)
@@ -416,7 +416,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 841, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1220, 21))
         self.menubar.setObjectName("menubar")
         self.menuAdvanced_Options = QtWidgets.QMenu(self.menubar)
         self.menuAdvanced_Options.setObjectName("menuAdvanced_Options")
@@ -482,6 +482,7 @@ class Ui_MainWindow(object):
         self.liveStatisticsLabel.setText(_translate("MainWindow", "Live-Statistics"))
         self.currentDayLabel.setText(_translate("MainWindow", "Current Day:"))
         self.precentageInfectedLabel.setText(_translate("MainWindow", "Infected:"))
+        self.percentageInfectedLCD.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-style:italic;\">Percentage of infected particles among </span><span style=\" font-style:italic; text-decoration: underline;\">all living</span><span style=\" font-style:italic;\"> particles!</span></p></body></html>"))
         self.simSpeedLabel.setText(_translate("MainWindow", "Simulation speed:"))
         self.speedMultiplierLabel.setToolTip(_translate("MainWindow", "<html><head/><body><p><span style=\" font-style:italic;\">Percentage of infected particles compared to all living particles!</span></p></body></html>"))
         self.speedMultiplierLabel.setText(_translate("MainWindow", "Multiplier:"))
@@ -499,4 +500,5 @@ class Ui_MainWindow(object):
         self.actionSocial_distancing_radius.setText(_translate("MainWindow", "Social distancing radius"))
 
 from pyqtgraph import PlotWidget
+
 

@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from resources import constVariables
 
 from view.mainwindow import Ui_MainWindow
-from view.granularityWindow import Ui_Dialog
 
 class View(QtWidgets.QMainWindow, Ui_MainWindow):
     startSimulationSignal = QtCore.pyqtSignal(int, int, int, int, int, int, int, int,
@@ -63,8 +62,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.whiteBrush = QBrush(Qt.white)
         self.pen = QPen(Qt.black)
 
-        #self.granularity = self.granularitySpinBox.value()
-
         # set the color of the LCDs
         self.palette = self.daysPassedLCD.palette()
         # foreground color
@@ -78,18 +75,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # set the palette
         self.daysPassedLCD.setPalette(self.palette)
         self.multiplyLCD.setPalette(self.palette)
+        self.percentageInfectedLCD.setPalette(self.palette)
 
+        # initiate second palette for later
         self.palette2 = self.percentageInfectedLCD.palette()
-        # foreground color
-        self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(0, 0, 0))
-        # background color
-        self.palette2.setColor(self.palette2.Background, QtGui.QColor(0, 0, 0))
-        # "light" border
-        self.palette2.setColor(self.palette2.Light, QtGui.QColor(0, 0, 0))
-        # "dark" border
-        self.palette2.setColor(self.palette2.Dark, QtGui.QColor(0, 0, 0))
-        # set the palette
-        self.percentageInfectedLCD.setPalette(self.palette2)
 
         # prepare the live plot
         self.quantityList = []
@@ -117,6 +106,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                                     pen=pg.mkPen(width=3, color="r", style=QtCore.Qt.DotLine),
                                                     name="Capacity")
 
+    # connect signals -> reaction if a button is clicked
     def connectSignals(self):
         # buttons
         self.startSimButton.pressed.connect(self.startSimulationClicked)
@@ -132,7 +122,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.healthCareOverloadedCheckBox.clicked.connect(self.healthCareCheckBoxClicked)
 
         # parameters
-        #self.granularitySpinBox.valueChanged.connect(self.granularityChanged)
         self.riskOfInfSpinBox.valueChanged.connect(self.riskOfInfectionChanged)
         self.rateOfDeathSpinBox.valueChanged.connect(self.rateOfDeathChanged)
         self.percentageQuarantineSpinBox.valueChanged.connect(self.percentageOfQuarantineChanged)
@@ -157,6 +146,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                             self.vaccineCheckBox.isChecked(), self.socialDistancingSpinBox.value(),
                                             self.vaccineDaysSpinBox.value(), self.healthCareCapacitySpinBox.value(),
                                             self.deathRateMultiplierSpinBox.value())
+
             # disable modifiers and spin boxes
             self.socialDistancingLabel.setDisabled(True)
             self.socialDistancingSpinBox.setDisabled(True)
@@ -207,6 +197,8 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resetParameterButton.show()
         self.warningCapacityLabel.hide()
         self.simulationGraphicsView.fitInView(0, 0, constVariables.worldSize, constVariables.worldSize)
+
+        # reset display items to a state they were in at the beginning
         self.resetValues()
 
     # resets all the values to the state they were in before the simulation has started
@@ -325,10 +317,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             self.socialDistancingLabel.hide()
             self.socialDistancingSpinBox.hide()
 
-    # parameter change methods
-    def granularityChanged(self):
-        self.granularity = self.granularitySpinBox.value()
-
+# parameter change methods
     def riskOfInfectionChanged(self):
         self.riskOfInfectionSignal.emit(self.riskOfInfSpinBox.value() * 10)  # "*10" to get a whole number
 
@@ -358,8 +347,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     def startSimulation(self):
         print("SIMULATION STARTED!")
 
-    # update visible elements
-
+# update visible elements
     # updates the scene on the graphicsView
     def updateScene(self):
         self.simulationGraphicsView.setScene(self.scene)
@@ -388,49 +376,50 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             elif particleList[i].status == constVariables.quarantined:
                 ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.whiteBrush)
+            # draw infection radius if option is selected
+            if self.actionInfection_radius.isChecked():
+                self.drawRadiusInfection(particleList, i)
+            # draw social distancing radius if option is selected
+            if self.actionSocial_distancing_radius.isChecked():
+                self.drawRadiusSocialDistance(particleList, i)
 
-    # get user input path and return parameters for export
-    def getExportParameters(self):
+    def drawRadiusInfection(self, particleList, i):
+        self.scene.addEllipse(particleList[i].x - 4, particleList[i].y - 4,
+                                                    self.infectionRadiusSpinBox.value(),
+                                                    self.infectionRadiusSpinBox.value(),
+                                                    pen=pg.mkPen(width=2, color=(220, 50, 20)))
 
-        # WARNING: The path has to be saved as a .csv manually, otherwise the program will crash
-        path, filetype = QFileDialog.getSaveFileName(self, "Save File")
+    def drawRadiusSocialDistance(self, particleList, i):
+        self.scene.addEllipse(particleList[i].x + 4, particleList[i].y + 4,
+                                                         self.socialDistancingSpinBox.value(),
+                                                         self.socialDistancingSpinBox.value(),
+                                                         pen=pg.mkPen(width=2, color=(255, 255, 0)))
 
-        # return the path (and the filetype)
-        return path, filetype, self.granularitySpinBox.value()
-
-    # opens up an error message box
-    def errorTooManyInfected(self):
-        msg = QMessageBox()
-        msg.setWindowTitle("ERROR")
-        msg.setText("The amount of initially infected particles exceeds the total amount of particles!")
-        msg.setIcon(QMessageBox.Warning)
-        msg.setStandardButtons(QMessageBox.Close)
-        x = msg.exec()
-
-    # update elements
     # updates elements such as the counter, LCDs, the information for the plots, ...
     def updateElements(self, days, quantityList):
 
         # update the counter
         self.counter += 1
 
-        # percentage of infected particles corresponding to all "still alive" particles
-        percentageOfLiving = quantityList[days][2] / quantityList[days][5]  # percentage between 0 and 1
+        # percentage of infected particles corresponding to all "still alive" particles (also check for division by 0)
+        if quantityList[days][5] != 0:
+            percentageOfLiving = quantityList[days][2] / quantityList[days][5]  # percentage between 0 and 1
+        else:
+            percentageOfLiving = 0.0
         percentage_string = "{:.1%}".format(percentageOfLiving)
-        self.daysPassedLCD.display(days + 1)
+        self.daysPassedLCD.display(days)
         self.percentageInfectedLCD.display(percentage_string)  # percentage as non-fractional number
 
         # if capacity gets overrun -> show the label
         if self.healthCareOverloadedCheckBox.isChecked() and \
-                int(quantityList[days][
-                        2] * 100 / self.entitiesSpinBox.value()) > self.healthCareCapacitySpinBox.value():
+                int(quantityList[days][2] * 100 / self.entitiesSpinBox.value()) > \
+                self.healthCareCapacitySpinBox.value():
             self.warningCapacityLabel.show()
         else:
             self.warningCapacityLabel.hide()
 
         # change the colour scheme corresponding to the spread of the disease and set the new palette again
         self.updateColourScheme(percentageOfLiving)
-        self.percentageInfectedLCD.setPalette(self.palette2)
 
         # update the quantity list and plot the graph with the new information
         self.quantityList = quantityList
@@ -439,34 +428,24 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
     # updates the colour scheme of the LCD items
     def updateColourScheme(self, percentageOfLiving):
         if percentageOfLiving < 0.33:
-
             self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(50, 205, 50))
-            # background color
             self.palette2.setColor(self.palette2.Background, QtGui.QColor(50, 205, 50))
-            # "light" border
             self.palette2.setColor(self.palette2.Light, QtGui.QColor(50, 205, 50))
-            # "dark" border
             self.palette2.setColor(self.palette2.Dark, QtGui.QColor(50, 205, 50))
 
         elif percentageOfLiving < 0.66:
-
             self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(255, 140, 0))
-            # background color
             self.palette2.setColor(self.palette2.Background, QtGui.QColor(255, 140, 0))
-            # "light" border
             self.palette2.setColor(self.palette2.Light, QtGui.QColor(255, 140, 0))
-            # "dark" border
             self.palette2.setColor(self.palette2.Dark, QtGui.QColor(255, 140, 0))
 
         else:
-
             self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(220, 20, 60))
-            # background color
             self.palette2.setColor(self.palette2.Background, QtGui.QColor(220, 20, 60))
-            # "light" border
             self.palette2.setColor(self.palette2.Light, QtGui.QColor(220, 20, 60))
-            # "dark" border
             self.palette2.setColor(self.palette2.Dark, QtGui.QColor(220, 20, 60))
+        # set the palette
+        self.percentageInfectedLCD.setPalette(self.palette2)
 
     # updates the "speed multiplier"-LCD
     def updateMultiplier(self):
@@ -495,3 +474,21 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                                           np.full((int(self.counter / constVariables.dayLength),),
                                                   int((self.healthCareCapacitySpinBox.value() *
                                                        self.entitiesSpinBox.value())) / 100))
+
+    # get user input path and return parameters for export
+    def getExportParameters(self):
+
+        # WARNING: The path has to be saved as a .csv manually, otherwise the program will crash
+        path, filetype = QFileDialog.getSaveFileName(self, "Save File")
+
+        # return the path (and the filetype)
+        return path, filetype, self.granularitySpinBox.value()
+
+    # opens up an error message box
+    def errorTooManyInfected(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("ERROR")
+        msg.setText("The amount of initially infected particles exceeds the total amount of particles!")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setStandardButtons(QMessageBox.Close)
+        x = msg.exec()

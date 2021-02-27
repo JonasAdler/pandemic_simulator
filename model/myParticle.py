@@ -28,13 +28,19 @@ class MyParticle:
         for j in range(i + 1, len(particleList)):
 
             # detect particles that step into the infection radius of an infected particle
-            if abs(self.x - particleList[j].x) < infectionRadius and \
-                    abs(self.y - particleList[j].y) < infectionRadius:
+            #if abs(self.x - particleList[j].x) < infectionRadius and \
+             #       abs(self.y - particleList[j].y) < infectionRadius:
+              #  self.infectionCollisions.append(j)
+
+            if abs(self.x - particleList[j].x)*abs(self.x - particleList[j].x) + abs(self.y - particleList[j].y)*abs(self.y - particleList[j].y) < pow(infectionRadius, 2):
                 self.infectionCollisions.append(j)
 
             # detect particles that collide directly with another particle
-            if abs(self.x - particleList[j].x) < socialDistancingRadius and \
-                    abs(self.y - particleList[j].y) < socialDistancingRadius:
+            #if abs(self.x - particleList[j].x) < socialDistancingRadius and \
+             #       abs(self.y - particleList[j].y) < socialDistancingRadius:
+              #  self.deflectionCollisions.append(j)
+
+            if abs(self.x - particleList[j].x)*abs(self.x - particleList[j].x) + abs(self.y - particleList[j].y)*abs(self.y - particleList[j].y) < pow(socialDistancingRadius, 2):
                 self.deflectionCollisions.append(j)
 
     # moves the particle in a random direction, but will not let it go out of bounds

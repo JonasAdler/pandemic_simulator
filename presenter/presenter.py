@@ -3,7 +3,7 @@ from PyQt5 import QtCore
 from resources import constVariables
 from view.view import View
 from model.simulation import Simulation
-
+from view.viewEndWindow import ViewEndWindow
 import csv
 
 
@@ -22,6 +22,11 @@ class Presenter(QtCore.QObject):
         self.timer.start(int(1000 / constVariables.FPS))
         self.framecounter = 0
 
+        # create a second window
+        self.endWindow = ViewEndWindow()
+        self.endWindow.hide()
+        self.endWindowGotClosed = False
+
         self._connectUIElements()
 
     # perform the steps and draw the items on the scene for each step while the simulation is running
@@ -32,12 +37,21 @@ class Presenter(QtCore.QObject):
             self.ui.updateScene()
             self.ui.updateElements(self.simulation.getDays(), self.simulation.getQuantityList())
 
+            # track if the simulation is finished
+            if self.simulation.getIsFinished() and not self.endWindowGotClosed:
+                # pause the "main window"
+                self.ui.pauseSimulationClicked()
+                # update and show the "end window"
+                self.endWindow.updateElements(self.simulation.getQuantityList())
+                self.endWindow.show()
+                # ensures that the end window will not pop up again, even if user resumes the simulation
+                self.endWindowGotClosed = True
+
     # create the simulation and hand it all the predetermined values
     def startSimulation(self, amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath, riskOfQuarantine,
                         avgInfectedTime, avgImmuneTime, infectionRadius, modifierDeflect, modifierHealth,
                         modifierVaccine, socialDistanceRadius, vaccineDays, healthCareCapacity, deathRateMultiplier):
         self.isSimulationRunning = True
-        print("Hello World from Presenter")
         self.simulation = Simulation(amountOfParticles, initiallyInfected, riskOfInfection, rateOfDeath,
                                      riskOfQuarantine, avgInfectedTime, avgImmuneTime, infectionRadius,
                                      modifierDeflect, modifierHealth, modifierVaccine, socialDistanceRadius,
@@ -57,7 +71,10 @@ class Presenter(QtCore.QObject):
     # reset the simulation
     def resetSimulation(self):
         self.isSimulationRunning = False
+        # clean up the scene, enable showing "end window" and close the current "end window"
         self.ui.scene.clear()
+        self.endWindowGotClosed = False
+        self.endWindow.close()
         self.simulation = None
 
     # hand the given parameters with the quantityList to the write-Operation
