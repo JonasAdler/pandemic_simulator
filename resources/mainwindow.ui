@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>774</height>
+    <width>1220</width>
+    <height>904</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="entitiesLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -38,6 +38,18 @@
             </item>
             <item>
              <widget class="QSpinBox" name="entitiesSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -57,7 +69,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="initiallyInfectedLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -71,6 +83,18 @@
             </item>
             <item>
              <widget class="QSpinBox" name="initiallyInfectedSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -87,7 +111,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="modifierLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -95,9 +119,6 @@
                 <bold>true</bold>
                 <strikeout>false</strikeout>
                </font>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic; text-decoration: underline;&quot;&gt;Either &amp;quot;closure of schools &amp;quot;or &amp;quot;particles deflect each other&amp;quot;!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select modifier:</string>
@@ -109,19 +130,45 @@
               <item>
                <widget class="QCheckBox" name="deflectEachOtherCheckBox">
                 <property name="text">
-                 <string>Particles deflect each other</string>
+                 <string>Social distancing</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="closureOfSchoolsCheckBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Closure of schools</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_19">
+                <item>
+                 <widget class="QLabel" name="socialDistancingLabel">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Select the social distancing distance for the particles! (Min value = size of particle = 8, Max value = 2x size of particle = 16)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="text">
+                   <string>Social distancing radius:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="socialDistancingSpinBox">
+                  <property name="minimumSize">
+                   <size>
+                    <width>60</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>60</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="minimum">
+                   <number>8</number>
+                  </property>
+                  <property name="maximum">
+                   <number>16</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <widget class="QCheckBox" name="vaccineCheckBox">
@@ -133,7 +180,7 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <item>
-                 <widget class="QLabel" name="label_16">
+                 <widget class="QLabel" name="vaccineDaysLabel">
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How many days it takes until the vaccine is ready to use!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
@@ -144,11 +191,26 @@
                 </item>
                 <item>
                  <widget class="QSpinBox" name="vaccineDaysSpinBox">
+                  <property name="minimumSize">
+                   <size>
+                    <width>60</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>60</width>
+                    <height>60</height>
+                   </size>
+                  </property>
                   <property name="minimum">
                    <number>1</number>
                   </property>
                   <property name="maximum">
                    <number>365</number>
+                  </property>
+                  <property name="value">
+                   <number>15</number>
                   </property>
                  </widget>
                 </item>
@@ -156,10 +218,95 @@
               </item>
               <item>
                <widget class="QCheckBox" name="healthCareOverloadedCheckBox">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;If the amount of infected particles exceeds the health care system capaity, the death rate increases as treatment is no longer available for everybody!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Health care system can fail</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                  <item>
+                   <widget class="QLabel" name="capacityLabel">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Percentage of total particles -&amp;gt; Maximum amount of infected particles that the health care system can carry!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Capacity:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="healthCareCapacitySpinBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>60</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>60</height>
+                     </size>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="value">
+                     <number>35</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_21">
+                  <item>
+                   <widget class="QLabel" name="deathRateMultiplierLabel">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How much the death rate increases for particles where treatment is no longer possible.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Multiplier:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="deathRateMultiplierSpinBox">
+                    <property name="minimumSize">
+                     <size>
+                      <width>60</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>60</height>
+                     </size>
+                    </property>
+                    <property name="minimum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>3.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.100000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>1.500000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
@@ -168,7 +315,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLabel" name="label_11">
+             <widget class="QLabel" name="granularityLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -188,6 +335,18 @@
             </item>
             <item>
              <widget class="QSpinBox" name="granularitySpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -205,7 +364,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="riskOfInfectionLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -222,6 +381,18 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="riskOfInfSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="maximum">
                <double>100.000000000000000</double>
               </property>
@@ -229,7 +400,7 @@
                <double>0.100000000000000</double>
               </property>
               <property name="value">
-               <double>5.000000000000000</double>
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -238,7 +409,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="rateOfDeathLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -255,6 +426,18 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="rateOfDeathSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="maximum">
                <double>100.000000000000000</double>
               </property>
@@ -271,7 +454,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label_7">
+             <widget class="QLabel" name="percentageOfQuarantineLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -288,6 +471,18 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="percentageQuarantineSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="decimals">
                <number>1</number>
               </property>
@@ -295,7 +490,7 @@
                <double>0.100000000000000</double>
               </property>
               <property name="value">
-               <double>20.000000000000000</double>
+               <double>10.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -304,7 +499,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel" name="avgInfectionTimeLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -315,12 +510,24 @@
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Randomly selects a time within a deviation of 25% of the selected value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>Select average infectied-time in days:</string>
+               <string>Select average infection-time in days:</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QSpinBox" name="avgInfectionTimeSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::UpDownArrows</enum>
               </property>
@@ -328,7 +535,7 @@
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>60</number>
+               <number>100</number>
               </property>
               <property name="value">
                <number>7</number>
@@ -340,7 +547,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="avgImmuneTimeLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -357,6 +564,18 @@
             </item>
             <item>
              <widget class="QSpinBox" name="avgImmuneTimeSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -373,7 +592,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_18">
             <item>
-             <widget class="QLabel" name="infectionRadiusSpinBox">
+             <widget class="QLabel" name="infectionRadiusLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -389,7 +608,19 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="infectionRadiusSpinBox_2">
+             <widget class="QSpinBox" name="infectionRadiusSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="minimum">
                <number>1</number>
               </property>
@@ -397,11 +628,21 @@
                <number>100</number>
               </property>
               <property name="value">
-               <number>10</number>
+               <number>16</number>
               </property>
              </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="resetParameterButton">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Resets all changable values to their respective default value!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Reset parameters</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -415,7 +656,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="simulationLabel">
             <property name="font">
              <font>
               <pointsize>12</pointsize>
@@ -432,7 +673,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGraphicsView" name="graphicsView_2"/>
+           <widget class="QGraphicsView" name="simulationGraphicsView"/>
           </item>
          </layout>
         </item>
@@ -445,7 +686,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="liveStatisticsLabel">
             <property name="font">
              <font>
               <pointsize>12</pointsize>
@@ -462,12 +703,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QGraphicsView" name="graphicsView_3"/>
+           <widget class="PlotWidget" name="graphicWidget" native="true"/>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
-             <widget class="QLabel" name="label_13">
+             <widget class="QLabel" name="currentDayLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -503,7 +744,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_14">
+             <widget class="QLabel" name="precentageInfectedLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -517,6 +758,9 @@
             </item>
             <item>
              <widget class="QLCDNumber" name="percentageInfectedLCD">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Percentage of infected particles among &lt;/span&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;all living&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; particles!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="digitCount">
                <number>6</number>
               </property>
@@ -531,7 +775,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_16">
         <item>
-         <widget class="QLabel" name="label_12">
+         <widget class="QLabel" name="simSpeedLabel">
           <property name="font">
            <font>
             <weight>75</weight>
@@ -563,12 +807,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_15">
+         <widget class="QLabel" name="speedMultiplierLabel">
           <property name="font">
            <font>
             <weight>75</weight>
             <bold>true</bold>
            </font>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Percentage of infected particles compared to all living particles!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>Multiplier:</string>
@@ -610,6 +857,24 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QLabel" name="warningCapacityLabel">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <underline>false</underline>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#cc0d0d;&quot;&gt;WARNING: Health care capacity exceeded!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -628,6 +893,15 @@
          <widget class="QPushButton" name="resetSimButton">
           <property name="text">
            <string>Reset</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -649,11 +923,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="exportCsvButton">
-          <property name="text">
-           <string>Export</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QPushButton" name="exportCsvButton">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -666,13 +944,61 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1100</width>
+     <width>1220</width>
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuAdvanced_Options">
+    <property name="title">
+     <string>Advanced Options</string>
+    </property>
+    <widget class="QMenu" name="menuShow_Hide">
+     <property name="title">
+      <string>Show/Hide...</string>
+     </property>
+     <addaction name="actionInfection_radius"/>
+     <addaction name="actionSocial_distancing_radius"/>
+    </widget>
+    <addaction name="menuShow_Hide"/>
+   </widget>
+   <addaction name="menuAdvanced_Options"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionShow_social_distancing_radius">
+   <property name="text">
+    <string>Show/Hide social distancing radius</string>
+   </property>
+  </action>
+  <action name="actionChange_default_values">
+   <property name="text">
+    <string>Change default values</string>
+   </property>
+  </action>
+  <action name="actionInfection_radius">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Infection radius</string>
+   </property>
+  </action>
+  <action name="actionSocial_distancing_radius">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Social distancing radius</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
