@@ -18,7 +18,7 @@ class MyParticle:
         self.deflectionCollisions = []
         self.isVaccinated = False  # is the particle vaccinated
 
-    def collidesWith(self, particleList, i, infectionRadius, socialDistancingRadius):
+    def collidesWith(self, particleList, i, infectionRadius, socialDistancingRadius, deflectEnabled):
         # reset the colliding particles for each function call
         self.infectionCollisions = []
         self.deflectionCollisions = []
@@ -28,9 +28,13 @@ class MyParticle:
 
             if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= infectionRadius + constVariables.particleSize:
                 self.infectionCollisions.append(j)
-
-            if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= socialDistancingRadius + constVariables.particleSize:
-                self.deflectionCollisions.append(j)
+            # differentiate in collision method between social distancing enabled/disabled
+            if deflectEnabled:
+                if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= socialDistancingRadius + constVariables.particleSize:
+                    self.deflectionCollisions.append(j)
+            else:
+                if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= constVariables.particleSize:
+                    self.deflectionCollisions.append(j)
 
     # moves the particle in a random direction, but will not let it go out of bounds
     def moveParticle(self):

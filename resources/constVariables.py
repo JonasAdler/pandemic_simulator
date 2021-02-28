@@ -31,7 +31,7 @@ avgImmuneTimeSpinBoxDefault = 10
 infectionRadiusSpinBoxDefault = 16
 
 speedOfSimSliderDefault = 60
-socialDistancingSpinBoxDefault = 8
+socialDistancingSpinBoxDefault = 0
 vaccineDaysSpinBoxDefault = 15
 healthCareCapacitySpinBoxDefault = 35
 deathRateMultiplierSpinBoxDefault = 1.5

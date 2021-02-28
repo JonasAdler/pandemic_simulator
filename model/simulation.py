@@ -157,9 +157,14 @@ class Simulation:
                 collisionAfterSpawn = False
                 # test if the particle spawns inside of the area of another one
                 for k in range(i):
-                    if np.sqrt(abs(randomX - self.particleList[k].x)**2 + abs(randomY - self.particleList[k].y)**2) <= self.socialDistancingRadius + constVariables.particleSize:
-                        collisionAfterSpawn = True
-                        break
+                    if self.modifierDeflectEnabled:
+                        if np.sqrt(abs(randomX - self.particleList[k].x)**2 + abs(randomY - self.particleList[k].y)**2) <= self.socialDistancingRadius + constVariables.particleSize:
+                            collisionAfterSpawn = True
+                            break
+                    else:
+                        if np.sqrt(abs(randomX - self.particleList[k].x)**2 + abs(randomY - self.particleList[k].y)**2) <= constVariables.particleSize:
+                            collisionAfterSpawn = True
+                            break
                 if not collisionAfterSpawn:
                     # create a particle
                     self.particleList[i] = MyParticle(randomX, randomY)
@@ -182,7 +187,7 @@ class Simulation:
             randomRisk = random.randint(0, 1000)
             deviationInfDays = int(self.avgInfectedTime*constVariables.deviation)
             # check for collisions
-            self.particleList[i].collidesWith(self.particleList, i, self.infectionRadius, self.socialDistancingRadius)
+            self.particleList[i].collidesWith(self.particleList, i, self.infectionRadius, self.socialDistancingRadius, self.modifierDeflectEnabled)
 
             # if at least one collision has been detected for the particle -> iterate through all its collisions
             if len(self.particleList[i].infectionCollisions) > 0:
@@ -329,7 +334,11 @@ class Simulation:
 
     # sets opposite directions for two particles if they collide
     def setOppositeDirection(self, i, j):
-        movements = int(self.socialDistancingRadius * 0.2)
+        # how many steps "away" from the other particle -> dependent on social distancing radius
+        if self.modifierDeflectEnabled:
+            movements = int(self.socialDistancingRadius * 0.2)
+        else:
+            movements = int(constVariables.particleSize * 0.2)
         # change direction for particle i
         if self.particleList[i].direction == constVariables.NW:
             self.particleList[i].direction = constVariables.SE
