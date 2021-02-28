@@ -344,7 +344,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.exportCsvSignal.emit()
 
     def startSimulation(self):
-        print("SIMULATION STARTED!")
+        print("----------")
 
 # update visible elements
     # updates the scene on the graphicsView

@@ -67,12 +67,10 @@ class Presenter(QtCore.QObject):
     # pause the simulation
     def pauseSimulation(self):
         self.isSimulationRunning = False
-        print("Simulation is paused at {} days.".format(self.simulation.stepCounter/constVariables.dayLength))
 
     # resume the simulation
     def resumeSiumlation(self):
         self.isSimulationRunning = True
-        print("Resuming the simulation!")
 
     # reset the simulation
     def resetSimulation(self):
