@@ -208,13 +208,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.daysPassedLCD.display(0)
         self.percentageInfectedLCD.display(0)
 
-        # reset days-lcd to black
-        self.palette.setColor(self.palette.WindowText, QtGui.QColor(0, 0, 0))
-        self.palette.setColor(self.palette.Background, QtGui.QColor(0, 0, 0))
-        self.palette.setColor(self.palette.Light, QtGui.QColor(0, 0, 0))
-        self.palette.setColor(self.palette.Dark, QtGui.QColor(0, 0, 0))
-        self.daysPassedLCD.setPalette(self.palette)
-
         # reset percentage-lcd to black
         self.palette2.setColor(self.palette2.WindowText, QtGui.QColor(0, 0, 0))
         self.palette2.setColor(self.palette2.Background, QtGui.QColor(0, 0, 0))
@@ -271,7 +264,6 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         # reset parameters on left side
         self.entitiesSpinBox.setValue(constVariables.entitiesSpinBoxDefault)
         self.initiallyInfectedSpinBox.setValue(constVariables.initiallyInfectedSpinBoxDefault)
-        self.granularitySpinBox.setValue(constVariables.granularitySpinBoxDefault)
 
         # reset parameters on the right side
         self.riskOfInfSpinBox.setValue(constVariables.riskOfInfSpinBoxDefault)
@@ -287,6 +279,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.vaccineDaysSpinBox.setValue(constVariables.vaccineDaysSpinBoxDefault)
         self.healthCareCapacitySpinBox.setValue(constVariables.healthCareCapacitySpinBoxDefault)
         self.deathRateMultiplierSpinBox.setValue(constVariables.deathRateMultiplierSpinBoxDefault)
+
+        # reset advanced options
+        self.actionInfection_radius.setChecked(False)
+        self.actionSocial_distancing_radius.setChecked(False)
 
     # drop-down managing
     def healthCareCheckBoxClicked(self):
@@ -362,20 +358,26 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         for i in range(len(particleList)):
             if particleList[i].status == constVariables.healthy:
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2, particleList[i].y -
+                                      constVariables.particleSize/2, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.greenBrush)
             elif particleList[i].status == constVariables.infected:
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2, particleList[i].y -
+                                      constVariables.particleSize/2, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.redBrush)
             elif particleList[i].status == constVariables.deceased:
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2, particleList[i].y -
+                                      constVariables.particleSize/2, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.greyBrush)
             elif particleList[i].status == constVariables.immune:
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2, particleList[i].y -
+                                      constVariables.particleSize/2, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.yellowBrush)
             elif particleList[i].status == constVariables.quarantined:
-                ellipse_item = self.scene.addEllipse(particleList[i].x, particleList[i].y, constVariables.particleSize,
+                self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2, particleList[i].y -
+                                      constVariables.particleSize/2, constVariables.particleSize,
                                                      constVariables.particleSize, self.pen, self.whiteBrush)
+
             # draw infection radius if option is selected
             if self.actionInfection_radius.isChecked():
                 self.drawRadiusInfection(particleList, i)
@@ -383,17 +385,27 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.actionSocial_distancing_radius.isChecked():
                 self.drawRadiusSocialDistance(particleList, i)
 
+    # draws a circle for the infection radius
     def drawRadiusInfection(self, particleList, i):
-        self.scene.addEllipse(particleList[i].x - 4, particleList[i].y - 4,
-                                                    self.infectionRadiusSpinBox.value(),
-                                                    self.infectionRadiusSpinBox.value(),
-                                                    pen=pg.mkPen(width=2, color=(220, 50, 20)))
+        # only the infected particles have a visible radius
+        if particleList[i].status == constVariables.infected:
+            # the ellipse needs to be adjusted to the infection radius and the particle size
+            self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2 -
+                                  self.infectionRadiusSpinBox.value(),
+                                  particleList[i].y - constVariables.particleSize/2 -
+                                  self.infectionRadiusSpinBox.value(),
+                                  self.infectionRadiusSpinBox.value()*2 + constVariables.particleSize,
+                                  self.infectionRadiusSpinBox.value()*2 + constVariables.particleSize,
+                                  pen=pg.mkPen(width=2, color=(220, 50, 20)))
 
+    # draw a circle for the social distancing radius
     def drawRadiusSocialDistance(self, particleList, i):
-        self.scene.addEllipse(particleList[i].x + 4, particleList[i].y + 4,
-                                                         self.socialDistancingSpinBox.value(),
-                                                         self.socialDistancingSpinBox.value(),
-                                                         pen=pg.mkPen(width=2, color=(255, 255, 0)))
+        # the ellipse needs to be adjusted to the social distancing radius and the particle size
+        self.scene.addEllipse(particleList[i].x - constVariables.particleSize/2 - self.socialDistancingSpinBox.value(),
+                              particleList[i].y - constVariables.particleSize/2 - self.socialDistancingSpinBox.value(),
+                              self.socialDistancingSpinBox.value()*2 + constVariables.particleSize,
+                              self.socialDistancingSpinBox.value()*2 + constVariables.particleSize,
+                              pen=pg.mkPen(width=2, color=(255, 255, 0)))
 
     # updates elements such as the counter, LCDs, the information for the plots, ...
     def updateElements(self, days, quantityList):
@@ -482,7 +494,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         path, filetype = QFileDialog.getSaveFileName(self, "Save File")
 
         # return the path (and the filetype)
-        return path, filetype, self.granularitySpinBox.value()
+        return path, filetype
 
     # opens up an error message box
     def errorTooManyInfected(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'secondWindow.ui'
+# Form implementation generated from reading ui file 'granularityWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -18,28 +18,28 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.granulartiyLabelSW = QtWidgets.QLabel(Dialog)
+        self.granulartiyLabelGW = QtWidgets.QLabel(Dialog)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
-        self.granulartiyLabelSW.setFont(font)
-        self.granulartiyLabelSW.setObjectName("granulartiyLabelSW")
-        self.horizontalLayout_2.addWidget(self.granulartiyLabelSW)
-        self.granularitySpinBoxSW = QtWidgets.QSpinBox(Dialog)
-        self.granularitySpinBoxSW.setMinimum(1)
-        self.granularitySpinBoxSW.setMaximum(100)
-        self.granularitySpinBoxSW.setObjectName("granularitySpinBoxSW")
-        self.horizontalLayout_2.addWidget(self.granularitySpinBoxSW)
+        self.granulartiyLabelGW.setFont(font)
+        self.granulartiyLabelGW.setObjectName("granulartiyLabelGW")
+        self.horizontalLayout_2.addWidget(self.granulartiyLabelGW)
+        self.granularitySpinBoxGW = QtWidgets.QSpinBox(Dialog)
+        self.granularitySpinBoxGW.setMinimum(1)
+        self.granularitySpinBoxGW.setMaximum(100)
+        self.granularitySpinBoxGW.setObjectName("granularitySpinBoxGW")
+        self.horizontalLayout_2.addWidget(self.granularitySpinBoxGW)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setDefault(True)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_3.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(Dialog)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout_3.addWidget(self.pushButton_2)
+        self.confirmButtonGW = QtWidgets.QPushButton(Dialog)
+        self.confirmButtonGW.setDefault(True)
+        self.confirmButtonGW.setObjectName("confirmButtonGW")
+        self.horizontalLayout_3.addWidget(self.confirmButtonGW)
+        self.cancelButtonGW = QtWidgets.QPushButton(Dialog)
+        self.cancelButtonGW.setObjectName("cancelButtonGW")
+        self.horizontalLayout_3.addWidget(self.cancelButtonGW)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.verticalLayout_2.addLayout(self.verticalLayout)
 
@@ -49,7 +49,9 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.granulartiyLabelSW.setToolTip(_translate("Dialog", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Only exports days that are multiples of the selected value</span></p></body></html>"))
-        self.granulartiyLabelSW.setText(_translate("Dialog", "Select a granularity for the export:"))
-        self.pushButton.setText(_translate("Dialog", "Confirm"))
-        self.pushButton_2.setText(_translate("Dialog", "Cancel"))
+        self.granulartiyLabelGW.setToolTip(_translate("Dialog", "<html><head/><body><p><span style=\" font-size:10pt; font-style:italic;\">Only exports days that are multiples of the selected value</span></p></body></html>"))
+        self.granulartiyLabelGW.setText(_translate("Dialog", "Select a granularity for the export:"))
+        self.confirmButtonGW.setText(_translate("Dialog", "Confirm"))
+        self.cancelButtonGW.setText(_translate("Dialog", "Cancel"))
+
+

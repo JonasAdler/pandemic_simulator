@@ -4,6 +4,7 @@ from resources import constVariables
 from view.view import View
 from model.simulation import Simulation
 from view.viewEndWindow import ViewEndWindow
+from view.viewGranularity import ViewGranularityWindow
 import csv
 
 
@@ -27,6 +28,10 @@ class Presenter(QtCore.QObject):
         self.endWindow.hide()
         self.endWindowGotClosed = False
 
+        # create granularity window
+        self.granularityWindow = ViewGranularityWindow()
+        self.granularityWindow.hide()
+
         self._connectUIElements()
 
     # perform the steps and draw the items on the scene for each step while the simulation is running
@@ -42,7 +47,8 @@ class Presenter(QtCore.QObject):
                 # pause the "main window"
                 self.ui.pauseSimulationClicked()
                 # update and show the "end window"
-                self.endWindow.updateElements(self.simulation.getQuantityList())
+                self.endWindow.updateElements(self.simulation.getQuantityList(),
+                                              self.simulation.getHealthCareModifier(), self.simulation.getCapacity())
                 self.endWindow.show()
                 # ensures that the end window will not pop up again, even if user resumes the simulation
                 self.endWindowGotClosed = True
@@ -77,9 +83,13 @@ class Presenter(QtCore.QObject):
         self.endWindow.close()
         self.simulation = None
 
+    # show the granularity window
+    def showGranularityWindow(self):
+        self.granularityWindow.exec_()
+
     # hand the given parameters with the quantityList to the write-Operation
-    def exportCsv(self):
-        path, filetype, granularity = self.ui.getExportParameters()
+    def exportCsv(self, granularity):
+        path, filetype = self.ui.getExportParameters()
         if path and granularity:
             self.writeInCsv(path, filetype, granularity, self.simulation.getQuantityList())
         else:
@@ -139,7 +149,7 @@ class Presenter(QtCore.QObject):
         self.ui.pauseSimulationSignal.connect(self.pauseSimulation)
         self.ui.resumeSimulationSignal.connect(self.resumeSiumlation)
         self.ui.resetSimulationSignal.connect(self.resetSimulation)
-        self.ui.exportCsvSignal.connect(self.exportCsv)
+        self.ui.exportCsvSignal.connect(self.showGranularityWindow)
         self.ui.riskOfInfectionSignal.connect(self.changeRiskOfI)
         self.ui.rateOfDeathSignal.connect(self.changeRate)
         self.ui.riskOfQuarantineSignal.connect(self.changeRiskOfQ)
@@ -147,3 +157,4 @@ class Presenter(QtCore.QObject):
         self.ui.avgImmuneTimeSignal.connect(self.changeAvgImmuneTime)
         self.ui.infectionRadiusSignal.connect(self.changeInfectionRadius)
         self.ui.speedOfSimSignal.connect(self.changeSpeedOfSim)
+        self.granularityWindow.granularitySelectedSignal.connect(self.exportCsv)

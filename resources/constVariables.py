@@ -3,7 +3,7 @@ dayLength = 60
 FPS = 60
 particleSize = 8
 worldSize = 500
-boundary = worldSize - particleSize
+boundary = worldSize - particleSize/2
 
 # health conditions
 healthy = "HEALTHY"
@@ -35,3 +35,7 @@ socialDistancingSpinBoxDefault = 8
 vaccineDaysSpinBoxDefault = 15
 healthCareCapacitySpinBoxDefault = 35
 deathRateMultiplierSpinBoxDefault = 1.5
+
+# programmer selected constants
+deviation = 0.25
+vaccinationsPerDayMax = 0.05

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1220</width>
-    <height>904</height>
+    <width>1242</width>
+    <height>901</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -139,7 +139,7 @@
                 <item>
                  <widget class="QLabel" name="socialDistancingLabel">
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Select the social distancing distance for the particles! (Min value = size of particle = 8, Max value = 2x size of particle = 16)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Select the social distancing distance for the particles! (For reference: The size of a particle is 8 -&amp;gt; MinValue = 0, MaxValue = 8; &lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can activate the visibility of the social distancing radius in the top left corner under &amp;quot;Advanced Options&amp;quot;!&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="text">
                    <string>Social distancing radius:</string>
@@ -161,10 +161,13 @@
                    </size>
                   </property>
                   <property name="minimum">
-                   <number>8</number>
+                   <number>0</number>
                   </property>
                   <property name="maximum">
-                   <number>16</number>
+                   <number>8</number>
+                  </property>
+                  <property name="value">
+                   <number>0</number>
                   </property>
                  </widget>
                 </item>
@@ -309,51 +312,6 @@
                </layout>
               </item>
              </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="granularityLabel">
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="mouseTracking">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Only exports days that are multiples of the selected value&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Select granularity:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="granularitySpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>150</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>100</number>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -600,7 +558,7 @@
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Comparison: Size of a particle is &amp;quot;8&amp;quot;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Comparison: Size of a particle is &amp;quot;8&amp;quot; (You can activate the visibility of the infection radius in the top left corner under &amp;quot;Advanced Options&amp;quot;!)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select infection radius:</string>
@@ -944,7 +902,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1220</width>
+     <width>1242</width>
      <height>21</height>
     </rect>
    </property>

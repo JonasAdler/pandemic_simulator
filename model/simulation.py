@@ -1,6 +1,7 @@
 import random
-import model.myParticle
+from model.myParticle import MyParticle
 from resources import constVariables
+import numpy as np
 
 
 class Simulation:
@@ -123,6 +124,7 @@ class Simulation:
             self.isFinished(day)
             print("Days passed since the outbreak: {}".format(day))
 
+# getter-methods
     def getDays(self):
         return int(self.stepCounter / constVariables.dayLength)
 
@@ -137,35 +139,56 @@ class Simulation:
     def getQuantityList(self):
         return self.quantityList
 
+    def getHealthCareModifier(self):
+        return self.modifierHealthCareEnabled
+
+    def getCapacity(self):
+        return self.healthCareCapacity
+
+    def getIsFinished(self):
+        return self.isSimulationFinished
+
     # creates myParticle that holds the necessary parameters for each particle
     def createParticle(self):
         for i in range(self.amountOfParticles):
-            # creating a particle object and saving it in a list
-            randomX = random.randint(0, constVariables.boundary)
-            randomY = random.randint(0, constVariables.boundary)
-            # create a particle
-            self.particleList[i] = model.myParticle.MyParticle(randomX, randomY)
-            # give the particle a random start-direction
-            self.particleList[i].setDirection()
+            whileLoop = True
+            while whileLoop:
+                # creating a particle object and saving it in a list
+                randomX = random.randint(constVariables.particleSize/2, constVariables.boundary)
+                randomY = random.randint(constVariables.particleSize/2, constVariables.boundary)
+                test = False
+                for k in range(i):
+                    if np.sqrt(abs(randomX - self.particleList[k].x)**2 + abs(randomY - self.particleList[k].y)**2) <= self.socialDistancingRadius + constVariables.particleSize:
+                        test = True
+                        break
+                if not test:
+                    # create a particle
+                    self.particleList[i] = MyParticle(randomX, randomY)
+                    # give the particle a random start-direction
+                    self.particleList[i].setDirection()
+                    whileLoop = False
 
         # infect
         for i in range(self.initiallyInfected):
             self.particleList[i].status = constVariables.infected
-            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime - int(self.avgInfectedTime*0.25),
-                                                               self.avgInfectedTime + int(self.avgInfectedTime*0.25))
+            self.particleList[i].daysInfected = random.randint(self.avgInfectedTime -
+                                                               int(self.avgInfectedTime * constVariables.deviation),
+                                                               self.avgInfectedTime +
+                                                               int(self.avgInfectedTime * constVariables.deviation))
 
     # will change the state of a particle after colliding with another
     def infectParticle(self):
         # iterate over the particles (only to the second last, see for loop in "MyParticle.collidesWith()")
         for i in range(self.amountOfParticles - 1):
             randomRisk = random.randint(0, 1000)
-            deviationInfDays = int(self.avgInfectedTime*0.25)
+            deviationInfDays = int(self.avgInfectedTime*constVariables.deviation)
             # check for collisions
             self.particleList[i].collidesWith(self.particleList, i, self.infectionRadius, self.socialDistancingRadius)
 
-            # if a collision has been detected for the particle
+            # if at least one collision has been detected for the particle -> iterate through all its collisions
             if len(self.particleList[i].infectionCollisions) > 0:
                 for j in self.particleList[i].infectionCollisions:
+                    # by chance, infect the particle
                     if randomRisk < self.riskOfInfection:
                         # either "i" is infected infects "j"...
                         if (self.particleList[i].status == constVariables.infected) \
@@ -197,7 +220,7 @@ class Simulation:
     # vaccinates particles
     def vaccinateParticles(self):
         # per day at least 1 and a maximum of 5% of the population get a vaccine
-        vaccinationsPerDay = random.randint(1, int(self.amountOfParticles*0.05))
+        vaccinationsPerDay = random.randint(1, int(self.amountOfParticles * constVariables.vaccinationsPerDayMax))
         for i in range(self.amountOfParticles):
             # vaccinate particles with the necessary conditions
             if not self.particleList[i].isVaccinated and self.particleList[i].status == constVariables.healthy:
@@ -221,9 +244,9 @@ class Simulation:
         for i in range(self.amountOfParticles):
             randomDeath = random.randint(0, 1000)
             randomQuarantine = random.randint(0, 1000)
-            # disease process for an infected particle, if it survives it will be immune for a certain time
-            # has also a certain chance to be quarantined, where it cannot infect anyone
 
+            # disease process for an infected particle, if it survives it will be immune for a certain time
+            # also has a certain chance to be quarantined, where it cannot infect anyone
             if self.particleList[i].daysInfected > 0:
                 self.updateInfected(i, randomDeath, randomQuarantine)
 
@@ -262,14 +285,16 @@ class Simulation:
         # if the particle survived the infection -> set the status to constVariables.immune
         if self.particleList[i].daysInfected == 0 and self.particleList[i].status == constVariables.infected:
             self.particleList[i].status = constVariables.immune
-            # + 1 because it will immediately be decremented in the same method once
-            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays - int(self.avgImmuneDays*0.25),
-                                                             self.avgImmuneDays + int(self.avgImmuneDays*0.25)) + 1
+            # + 1 because it will immediately be decremented in the "updateImmune"-method
+            self.particleList[i].daysImmune = random.randint(self.avgImmuneDays -
+                                                             int(self.avgImmuneDays * constVariables.deviation),
+                                                             self.avgImmuneDays +
+                                                             int(self.avgImmuneDays * constVariables.deviation)) + 1
 
     # necessary interactions with quarantined particles
     def updateQuarantined(self, i, randomDeath):
         self.particleList[i].daysQuarantined = self.particleList[i].daysQuarantined - 1
-        deviationImmuneDays = int(self.avgImmuneDays*0.25)
+        deviationImmuneDays = int(self.avgImmuneDays*constVariables.deviation)
         # particles can still die in quarantine
         if randomDeath < self.rateOfDeath and self.particleList[i].daysQuarantined > 0:
             self.particleList[i].status = constVariables.deceased
@@ -303,6 +328,7 @@ class Simulation:
         elif self.particleList[i].status == constVariables.deceased:
             self.countDeceased = self.countDeceased + 1
 
+    # sets opposite directions for two particles if they collide
     def setOppositeDirection(self, i, j):
         movements = int(self.socialDistancingRadius * 0.2)
         # change direction for particle i
@@ -352,5 +378,4 @@ class Simulation:
         if self.quantityList[day][2] == 0 or self.quantityList[day][4] == self.amountOfParticles:
             self.isSimulationFinished = True
 
-    def getIsFinished(self):
-        return self.isSimulationFinished
+

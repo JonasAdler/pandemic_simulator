@@ -1,5 +1,5 @@
 import random
-
+import numpy as np
 from resources import constVariables
 
 
@@ -32,15 +32,10 @@ class MyParticle:
              #       abs(self.y - particleList[j].y) < infectionRadius:
               #  self.infectionCollisions.append(j)
 
-            if abs(self.x - particleList[j].x)*abs(self.x - particleList[j].x) + abs(self.y - particleList[j].y)*abs(self.y - particleList[j].y) < pow(infectionRadius, 2):
+            if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= infectionRadius + constVariables.particleSize:
                 self.infectionCollisions.append(j)
 
-            # detect particles that collide directly with another particle
-            #if abs(self.x - particleList[j].x) < socialDistancingRadius and \
-             #       abs(self.y - particleList[j].y) < socialDistancingRadius:
-              #  self.deflectionCollisions.append(j)
-
-            if abs(self.x - particleList[j].x)*abs(self.x - particleList[j].x) + abs(self.y - particleList[j].y)*abs(self.y - particleList[j].y) < pow(socialDistancingRadius, 2):
+            if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= socialDistancingRadius + constVariables.particleSize:
                 self.deflectionCollisions.append(j)
 
     # moves the particle in a random direction, but will not let it go out of bounds
@@ -62,8 +57,8 @@ class MyParticle:
             dy = 0
 
         # if possible, move the particle
-        if 0 < self.x + dx < constVariables.boundary \
-                and 0 < self.y + dy < constVariables.boundary:
+        if constVariables.particleSize/2 < self.x + dx < constVariables.boundary \
+                and constVariables.particleSize/2 < self.y + dy < constVariables.boundary:
             self.x = self.x + dx
             self.y = self.y + dy
         else:
@@ -75,7 +70,7 @@ class MyParticle:
                 if newDirection == 2:
                     self.direction = constVariables.SW
 
-            elif self.x + dx <= 0:  # only possible direction is East
+            elif self.x + dx <= constVariables.particleSize/2:  # only possible direction is East
                 if newDirection == 1:
                     self.direction = constVariables.NE
                 if newDirection == 2:
@@ -87,7 +82,7 @@ class MyParticle:
                 if newDirection == 2:
                     self.direction = constVariables.NE
 
-            elif self.y + dy <= 0:  # only possible direction is South
+            elif self.y + dy <= constVariables.particleSize/2:  # only possible direction is South
                 if newDirection == 1:
                     self.direction = constVariables.SW
                 if newDirection == 2:
