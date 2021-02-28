@@ -13,10 +13,12 @@ class ViewGranularityWindow(QtWidgets.QDialog, Ui_Dialog):
 
         self.connectSignals()
 
+    # connect signals
     def connectSignals(self):
         self.confirmButtonGW.clicked.connect(self.confirmButtonClicked)
         self.cancelButtonGW.clicked.connect(self.cancelButtonClicked)
 
+# actions on button clicks
     def confirmButtonClicked(self):
         self.granularitySelectedSignal.emit(self.granularitySpinBoxGW.value())
         self.close()

@@ -42,9 +42,11 @@ class ViewEndWindow(QtWidgets.QDialog, Ui_Dialog):
 
         self.connectSignals()
 
+    # connect signals
     def connectSignals(self):
         self.closeEndButton.clicked.connect(self.closeEndButtonClicked)
 
+    # highlights the LCDs to improve visibility
     def highlightLCDs(self):
         # set the color of the LCDs
         self.palette = self.daysEndLCD.palette()
@@ -61,6 +63,7 @@ class ViewEndWindow(QtWidgets.QDialog, Ui_Dialog):
         self.daysEndLCD.setPalette(self.palette)
         self.maxInfectedEndLCD.setPalette(self.palette)
 
+    # update the shown data
     def updateElements(self, quantityList, healthCareEnabled, capacity):
         # if everyone is dead -> show "all have died"
         if quantityList[len(quantityList) - 1][5] == 0:
@@ -78,6 +81,7 @@ class ViewEndWindow(QtWidgets.QDialog, Ui_Dialog):
         # reset all elements (safety mechanism if the window is not closed via the button but with the "X"-symbol
         self.resetData()
 
+    # update the LCDs
     def updateLCDs(self, quantityList):
         maxInfected = -99999
         for i in range(len(quantityList)):
@@ -87,6 +91,7 @@ class ViewEndWindow(QtWidgets.QDialog, Ui_Dialog):
         self.maxInfectedEndLCD.display(maxInfected)
         self.daysEndLCD.display(len(quantityList) - 1)
 
+    # plot the graph
     def showGraph(self, quantityList, healthCareEnabled, capacity):
         for i in range(len(quantityList)):
             self.healthyPlot.append(quantityList[i][1])

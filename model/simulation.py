@@ -87,7 +87,6 @@ class Simulation:
             self.particleList[i].moveParticle()
 
         # we also want to change the state of the particles after contact with infected ones
-
         self.infectParticle()
 
         # particles deflect each other
@@ -122,7 +121,6 @@ class Simulation:
 
             # check if the simulation is finished
             self.isFinished(day)
-            print("Days passed since the outbreak: {}".format(day))
 
 # getter-methods
     def getDays(self):
@@ -156,19 +154,20 @@ class Simulation:
                 # creating a particle object and saving it in a list
                 randomX = random.randint(constVariables.particleSize/2, constVariables.boundary)
                 randomY = random.randint(constVariables.particleSize/2, constVariables.boundary)
-                test = False
+                collisionAfterSpawn = False
+                # test if the particle spawns inside of the area of another one
                 for k in range(i):
                     if np.sqrt(abs(randomX - self.particleList[k].x)**2 + abs(randomY - self.particleList[k].y)**2) <= self.socialDistancingRadius + constVariables.particleSize:
-                        test = True
+                        collisionAfterSpawn = True
                         break
-                if not test:
+                if not collisionAfterSpawn:
                     # create a particle
                     self.particleList[i] = MyParticle(randomX, randomY)
                     # give the particle a random start-direction
                     self.particleList[i].setDirection()
                     whileLoop = False
 
-        # infect
+        # initially infect the selected amount
         for i in range(self.initiallyInfected):
             self.particleList[i].status = constVariables.infected
             self.particleList[i].daysInfected = random.randint(self.avgInfectedTime -
@@ -373,8 +372,9 @@ class Simulation:
             for k in range(movements):
                 self.particleList[j].moveParticle()
 
+    # check if the pandemic was beaten or if every one is dead
     def isFinished(self, day):
-        # if no one is infected or all are dead
+        # if no one is infected or all are dead -> "finished"
         if self.quantityList[day][2] == 0 or self.quantityList[day][4] == self.amountOfParticles:
             self.isSimulationFinished = True
 

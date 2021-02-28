@@ -131,7 +131,10 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.speedOfSimSlider.valueChanged.connect(self.speedOfSimChanged)
 
-    # accumulation of events that happen, if buttons are pressed
+        self.actionMin_Max_values.triggered.connect(self.showMinMaxMessageBox)
+        self.actionShow_Legend.triggered.connect(self.showLegend)
+
+# accumulation of events that happen, if buttons are pressed
 
     def startSimulationClicked(self):
         # if no error, pass all the start values to the presenter
@@ -284,7 +287,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionInfection_radius.setChecked(False)
         self.actionSocial_distancing_radius.setChecked(False)
 
-    # drop-down managing
+# drop-down management
     def healthCareCheckBoxClicked(self):
         if self.healthCareOverloadedCheckBox.isChecked():
             self.capacityLabel.show()
@@ -405,7 +408,7 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
                               particleList[i].y - constVariables.particleSize/2 - self.socialDistancingSpinBox.value(),
                               self.socialDistancingSpinBox.value()*2 + constVariables.particleSize,
                               self.socialDistancingSpinBox.value()*2 + constVariables.particleSize,
-                              pen=pg.mkPen(width=2, color=(255, 255, 0)))
+                              pen=pg.mkPen(width=2, color=(20, 20, 240)))
 
     # updates elements such as the counter, LCDs, the information for the plots, ...
     def updateElements(self, days, quantityList):
@@ -503,4 +506,35 @@ class View(QtWidgets.QMainWindow, Ui_MainWindow):
         msg.setText("The amount of initially infected particles exceeds the total amount of particles!")
         msg.setIcon(QMessageBox.Warning)
         msg.setStandardButtons(QMessageBox.Close)
+        x = msg.exec()
+
+    # show the legend -> Which color is which state
+    def showLegend(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Legend")
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("Green = Healhty\nRed = Infected\n"
+                    "Yellow = Immune\nGrey = Deceased\n"
+                    "White = Quarantined\nBlue = Social distancing radius")
+
+        x = msg.exec_()
+
+    # shows the min and the max values of each interchangeable parameter
+    def showMinMaxMessageBox(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Min-/Max-values of all parameters")
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("Amount of entities: Min = 0; Max = 200"
+                    "\n""Initially infected: Min = 1; Max = amount of entities"
+                    "\nSocial distancing radius: Min = 0; Max = 8"
+                    "\nVaccine development: Min = 1; Max = 365"
+                    "\nCapacity: Min = 0; Max = 100"
+                    "\nMultiplier: Min = 1.0; Max = 3.0"
+                    "\nRisk of infection: Min = 0.0; Max = 100.0"
+                    "\nRate of death: Min = 0.0; Max = 100.0"
+                    "\nPercentage of being quarantined: Min = 0.0; Max = 100.0"
+                    "\nAverage infection time: Min = 1; Max = 100"
+                    "\nAverage immune time: Min = 1; Max = 999"
+                    "\nInfection radius: Min = 1; Max = 100")
+
         x = msg.exec()

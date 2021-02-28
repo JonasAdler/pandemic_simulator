@@ -157,7 +157,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>60</width>
-                    <height>60</height>
+                    <height>20</height>
                    </size>
                   </property>
                   <property name="minimum">
@@ -203,7 +203,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>60</width>
-                    <height>60</height>
+                    <height>20</height>
                    </size>
                   </property>
                   <property name="minimum">
@@ -236,7 +236,7 @@
                   <item>
                    <widget class="QLabel" name="capacityLabel">
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Percentage of total particles -&amp;gt; Maximum amount of infected particles that the health care system can carry!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Percentage of total particles -&amp;gt; Maximum amount of infected particles that the health care system can carry! This leads to an increased death rate!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="text">
                      <string>Capacity:</string>
@@ -254,7 +254,7 @@
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
-                      <height>60</height>
+                      <height>20</height>
                      </size>
                     </property>
                     <property name="maximum">
@@ -272,7 +272,7 @@
                   <item>
                    <widget class="QLabel" name="deathRateMultiplierLabel">
                     <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How much the death rate increases for particles where treatment is no longer possible.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;How much the death rate increases for particles where treatment is no longer possible. (MinValue = 1, MaxValue = 3.0)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                     </property>
                     <property name="text">
                      <string>Multiplier:</string>
@@ -290,7 +290,7 @@
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
-                      <height>60</height>
+                      <height>20</height>
                      </size>
                     </property>
                     <property name="minimum">
@@ -919,7 +919,15 @@
     </widget>
     <addaction name="menuShow_Hide"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionShow_Legend"/>
+    <addaction name="actionMin_Max_values"/>
+   </widget>
    <addaction name="menuAdvanced_Options"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionShow_social_distancing_radius">
@@ -946,6 +954,16 @@
    </property>
    <property name="text">
     <string>Social distancing radius</string>
+   </property>
+  </action>
+  <action name="actionShow_Legend">
+   <property name="text">
+    <string>Show Legend...</string>
+   </property>
+  </action>
+  <action name="actionMin_Max_values">
+   <property name="text">
+    <string>Min-/Max-values</string>
    </property>
   </action>
  </widget>

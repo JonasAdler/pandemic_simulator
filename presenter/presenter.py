@@ -139,6 +139,7 @@ class Presenter(QtCore.QObject):
         if self.simulation:
             self.simulation.changeInfectionRadiusS(radius)
 
+    # change the speed of the simulation
     def changeSpeedOfSim(self, newSpeed):
         self.timer.start(int(1000/newSpeed))
 

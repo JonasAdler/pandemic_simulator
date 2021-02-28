@@ -2,22 +2,21 @@ import random
 import numpy as np
 from resources import constVariables
 
-
 class MyParticle:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.direction = None  # possible directions: NW(North-West), NO(North-East), SW(South-West), SO(South-East)
         self.status = constVariables.healthy  # possible status: HEALTHY, INFECTED, DECEASED, IMMUNE, QUARANTINED
-        self.daysInfected = 0
-        self.daysImmune = 0
-        self.daysQuarantined = 0
+        self.daysInfected = 0  # duration of infection
+        self.daysImmune = 0  # duration of immunity
+        self.daysQuarantined = 0  # duration of quarantine
+
         # stores the position of the particles (in the particle list) that...
-        # ... are within the infection radius of this particle
-        self.infectionCollisions = []
+        self.infectionCollisions = []  # ... are within the infection radius of this particle
         # ... are in the personal space of this particle
         self.deflectionCollisions = []
-        self.isVaccinated = False
+        self.isVaccinated = False  # is the particle vaccinated
 
     def collidesWith(self, particleList, i, infectionRadius, socialDistancingRadius):
         # reset the colliding particles for each function call
@@ -26,11 +25,6 @@ class MyParticle:
         # iterate over the list starting with the "next" particle
         # -> every particle with a position smaller than "i" has already been compared to "i"
         for j in range(i + 1, len(particleList)):
-
-            # detect particles that step into the infection radius of an infected particle
-            #if abs(self.x - particleList[j].x) < infectionRadius and \
-             #       abs(self.y - particleList[j].y) < infectionRadius:
-              #  self.infectionCollisions.append(j)
 
             if np.sqrt(abs(self.x - particleList[j].x)**2 + abs(self.y - particleList[j].y)**2) <= infectionRadius + constVariables.particleSize:
                 self.infectionCollisions.append(j)
